@@ -56,7 +56,7 @@ MIDDLEWARE_CLASSES = [
 
 
 AUTHENTICATION_BACKENDS = [
-    'bdc.auth.GIAuthBackend',
+    'gi.auth.GIAuthBackend',
 ]
 
 API_PUBLIC_URL = os.environ.get('API_PUBLIC_URL')
