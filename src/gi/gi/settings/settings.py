@@ -36,6 +36,10 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'base',
+    'bureauxdechange',
+    'coffre',
+    'comptesenbanque',
+    'operationsatraiter',
 
     # 'raven.contrib.django.raven_compat',
 

@@ -19,6 +19,10 @@ from django.contrib.auth.views import logout
 from django.core.urlresolvers import reverse_lazy
 
 from base import views as base_views
+from bureauxdechange import views as bdc_views
+from coffre import views as coffre_views
+# from comptesenbanque import views as comptes_views
+# from operationsatraiter import views as operations_views
 from gi.auth import login_view
 
 urlpatterns = [
@@ -36,6 +40,12 @@ urlpatterns = [
     # change-password
     url(r'^change-password/?$', base_views.change_password, name='change-password'),
 
-    # home - member search page
+    # coffre
+    url(r'^coffre/?$', coffre_views.index, name='coffre-home'),
+
+    # bdc
+    url(r'^bdc/?$', bdc_views.index, name='bdc-home'),
+
+    # home
     # url(r'^$', members_views.search, name='home'),
 ]
