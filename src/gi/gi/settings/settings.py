@@ -23,7 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'c&dhme_ogv(n$8jz2a2!3#f&41fof=p15g^fi13jpkd$dl!@ro'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# You need to explicitly set DJANGO_DEBUG=True in docker-compose.yml (or environment variable) to have DEBUG on
+DEBUG = os.environ.get('DJANGO_DEBUG', False)
+if DEBUG and DEBUG in [True, 'true', 'True', 'yes', 'Yes']:
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
