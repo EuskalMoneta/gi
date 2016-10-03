@@ -3,9 +3,9 @@
 // thus we can also setup JavaScript things ... all of those will be used everywhere in our app
 
 import {
-    Flags,
     NavbarTitle,
-    NavbarItems
+    NavbarItems,
+    NavbarRight,
 } from 'Utils'
 
 // Load the CSS stylesheets for our dependencies
@@ -18,17 +18,12 @@ import 'node_modules/react-selectize/themes/index.css'
 import '../scss/style.scss'
 
 // Setup momentjs
-moment.locale(document.documentElement.lang);
-moment().utcOffset("+01:00");
+moment.locale(document.documentElement.lang)
+moment().utcOffset("+01:00")
 
 // Setup raven (Sentry client)
-Raven.config('http://02c622eee5004e9fa9b661395e6ca409@localhost:9000/3').install();
+Raven.config('http://02c622eee5004e9fa9b661395e6ca409@localhost:8081/3').install()
 
-
-ReactDOM.render(
-    <Flags />,
-    document.getElementById('flags')
-)
 
 ReactDOM.render(
     <NavbarTitle />,
@@ -42,4 +37,9 @@ const navbarObjects = [{href: '/members/search', label: __("Adhérents"), id: 0}
 ReactDOM.render(
     <NavbarItems objects={navbarObjects} />,
     document.getElementById('navbar-content')
+)
+
+ReactDOM.render(
+    <NavbarRight />,
+    document.getElementById('navbar-right')
 )

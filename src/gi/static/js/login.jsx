@@ -115,7 +115,7 @@ class LoginPage extends React.Component {
                     }
                 })
                 .then(checkStatus)
-                .then(() => {
+                .then((response) => {
                     var next = getUrlParameter('next')
                     if (!next)
                         next = window.config.getLoginRedirectURL
@@ -171,7 +171,7 @@ class LoginPage extends React.Component {
                                    name="username" id="username"
                                    value={this.state.username}
                                    onChange={this.handleChange}
-                                   placeholder={__('Identifiant Bureau de Change')}
+                                   placeholder={__('Identifiant')}
                                    disabled={this.state.displaySpinner}
                                    required
                             />
