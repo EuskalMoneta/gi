@@ -15,7 +15,7 @@ var BDCList = React.createClass({
 
      getInitialState() {
         return {
-            bdcList: undefined,
+            bdcList: Array(),
             bdcViewAllList: false,
         }
     },
@@ -24,7 +24,7 @@ var BDCList = React.createClass({
         // Get bdcList
         var bdcList = _.chain(data.results)
                         .map((item) => {
-                            return {name: item.label,
+                            return {name: item.label, id: item.value,
                                     login: item.shortLabel.replace(/_BDC/g, '')}
                         })
                         .sortBy((item) => {return item.login})
@@ -45,28 +45,24 @@ var BDCList = React.createClass({
     },
 
     render() {
-        if (this.state.bdcList != undefined)
-        {
-            const selectRowProp = {
-                mode: 'radio',
-                clickToSelect: true,
-                hideSelectColumn: true,
-                onSelect: (row, isSelected, event) => {
-                    window.location.assign(this.props.bdcUrl + row.login)
-                }
+        const selectRowProp = {
+            mode: 'radio',
+            clickToSelect: true,
+            hideSelectColumn: true,
+            onSelect: (row, isSelected, event) => {
+                window.location.assign(this.props.bdcUrl + row.login)
             }
-
-            var bdcListTable = (
-                <BootstrapTable data={this.state.bdcList} striped={true} hover={true} selectRow={selectRowProp}
-                                tableContainerClass="react-bs-table-list-bdc" options={{noDataText: __("Rien à afficher.")}}
-                >
-                    <TableHeaderColumn dataField="login" isKey={true} width="100">{__("Code")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="name">{__("Nom")}</TableHeaderColumn>
-                </BootstrapTable>
-            )
         }
-        else
-            var bdcListTable = null;
+
+        var bdcListTable = (
+            <BootstrapTable data={this.state.bdcList} striped={true} hover={true} selectRow={selectRowProp}
+                            tableContainerClass="react-bs-table-list-bdc" options={{noDataText: __("Rien à afficher.")}}
+            >
+                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="login" width="100">{__("Code")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="name">{__("Nom")}</TableHeaderColumn>
+            </BootstrapTable>
+        )
 
         return (
             <div className="row">
