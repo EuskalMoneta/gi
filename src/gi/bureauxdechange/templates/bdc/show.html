@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block extra_js %}
-  {% with 'bundles/js/'|add:CURRENT_LANG|add:'.BDCShow.js' as bdc_js_static %}
+  {% with 'bundles/js/'|add:CURRENT_LANG|add:'.BDCManager.js' as bdc_js_static %}
     <script src="{% static bdc_js_static %}"></script>
   {% endwith %}
 {% endblock %}

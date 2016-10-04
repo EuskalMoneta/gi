@@ -1,15 +1,8 @@
 import {
     fetchAuth,
-    isMemberIdEusko,
     getAPIBaseURL,
     NavbarTitle,
-    SelectizeUtils,
 } from 'Utils'
-
-
-const {
-    Input
-} = FRC
 
 import {
     BootstrapTable,
@@ -18,32 +11,40 @@ import {
 import 'node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.css'
 
 
-class BDCList extends React.Component {
+var BDCList = React.createClass({
 
-    constructor(props) {
-        super(props);
-
-        // Default state
-        this.state = {
+     getInitialState() {
+        return {
             bdcList: undefined,
+            bdcViewAllList: false,
         }
+    },
 
+    computeBdcList(data) {
         // Get bdcList
-        var computeBdcList = (data) => {
-            var bdcList = _.chain(data.results)
-                            .map((item) => {
-                                return {name: item.label,
-                                        login: item.shortLabel.replace(/_BDC/g, '')}
-                            })
-                            .sortBy((item) => {return item.login})
-                            .value()
+        var bdcList = _.chain(data.results)
+                        .map((item) => {
+                            return {name: item.label,
+                                    login: item.shortLabel.replace(/_BDC/g, '')}
+                        })
+                        .sortBy((item) => {return item.login})
+                        .value()
 
-            this.setState({bdcList: bdcList})
-        }
-        fetchAuth(this.props.bdcListUrl, this.props.method, computeBdcList)
-    }
+        this.setState({bdcList: bdcList})
+    },
 
-    render = () => {
+    componentDidMount() {
+        fetchAuth(this.props.bdcListUrl, this.props.method, this.computeBdcList)
+    },
+
+    bdcViewAllListOnChange(event) {
+        this.setState({bdcViewAllList: !this.state.bdcViewAllList}, () => {
+            fetchAuth(this.props.bdcListUrl + "?view_all=" + this.state.bdcViewAllList,
+                      this.props.method, this.computeBdcList)
+        })
+    },
+
+    render() {
         if (this.state.bdcList != undefined)
         {
             const selectRowProp = {
@@ -77,6 +78,14 @@ class BDCList extends React.Component {
                     </div>
                 </div>
                 <div className="row">
+                    <div className="col-md-4">
+                        <label className="font-weight-normal margin-top-ten">
+                            <input type="checkbox" value={this.state.bdcViewAllList} onChange={this.bdcViewAllListOnChange} />
+                            {' '}{__("Afficher les bureaux de change fermés")}
+                        </label>
+                    </div>
+                </div>
+                <div className="row">
                     <div className="col-md-9 search-results">
                         {bdcListTable}
                     </div>
@@ -84,7 +93,7 @@ class BDCList extends React.Component {
             </div>
         )
     }
-}
+})
 
 
 ReactDOM.render(
