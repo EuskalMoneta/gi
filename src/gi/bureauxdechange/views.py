@@ -8,5 +8,10 @@ def index(request):
 
 
 @login_required
+def add(request):
+    return render(request, 'bdc/add.html')
+
+
+@login_required
 def show(request, bdc_id):
     return render(request, 'bdc/show.html', {'bdc_id': bdc_id})

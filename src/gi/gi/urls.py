@@ -45,6 +45,7 @@ urlpatterns = [
 
     # bdc
     url(r'^bdc/?$', bdc_views.index, name='bdc-home'),
+    url(r'^bdc/add/?$', bdc_views.add, name='bdc-add'),
     url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/?$', bdc_views.show, name='bdc-show'),
 
     # home

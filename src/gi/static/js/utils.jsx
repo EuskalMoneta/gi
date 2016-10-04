@@ -108,6 +108,21 @@ var isMemberIdEusko = (values, value) =>
     }
 }
 
+var isBdcIdEusko = (values, value) =>
+{
+    if (!value) {
+        return false
+    }
+
+    if (value.startsWith("B", 0) && value.length === 4 &&
+        !isNaN(value[1]) && !isNaN(value[2]) && !isNaN(value[3])) {
+        return true
+    }
+    else {
+        return false
+    }
+}
+
 var isPositiveNumeric = (values, value) =>
 {
     if (!value || value == 0) {
@@ -316,6 +331,7 @@ module.exports = {
     fetchGetToken: fetchGetToken,
     getUrlParameter: getUrlParameter,
     isMemberIdEusko: isMemberIdEusko,
+    isBdcIdEusko: isBdcIdEusko,
     isPositiveNumeric: isPositiveNumeric,
     titleCase: titleCase,
     getCurrentLang: getCurrentLang,
