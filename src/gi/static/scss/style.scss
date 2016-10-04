@@ -87,38 +87,38 @@ textarea {
 }
 
 /* MemberShow */
-.member-show-panel {
+.bdc-show-panel {
   label {
     text-align: right;
   }
 }
 
-.member-status-text {
+.bdc-status-text {
   margin-right: 5px;
 }
 
-.member-status-date {
+.bdc-status-date {
   font-size: 15px;
 }
 
-.font-member-status {
+.font-bdc-status {
   font-size: 20px;
   vertical-align: middle;
 }
 
-.member-status-ok {
+.bdc-status-ok {
   color: #128f76;
   vertical-align: -1px;
   margin-right: 5px;
 }
 
-.member-status-nok {
+.bdc-status-nok {
   color: #e74c3c;
   vertical-align: -2px;
   margin-right: 5px;
 }
 
-.member-show-status {
+.bdc-show-status {
   padding-top: 10px;
   padding-right: 15px;
   padding-bottom: 10px;
@@ -126,7 +126,7 @@ textarea {
   vertical-align: middle;
 }
 
-.member-show-div-margin-left {
+.bdc-show-div-margin-left {
   margin-left: 50px;
 }
 
@@ -202,7 +202,7 @@ textarea {
   margin-bottom: 10px;
 }
 
-.member-login-row {
+.bdc-login-row {
   margin-bottom: 5px;
 }
 
@@ -272,8 +272,8 @@ textarea {
   background-color: white;
 }
 
-.react-bs-table-account-history {
-  margin-top: 0px !important;
+.react-bs-table-list-bdc {
+  margin-top: 20px !important;
   margin-right: 10px !important;
   margin-left: 0px !important;
   margin-bottom: 0px !important;

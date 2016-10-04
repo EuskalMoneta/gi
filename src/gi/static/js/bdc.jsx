@@ -30,13 +30,13 @@ class BDCList extends React.Component {
 
         // Get bdcList
         var computeBdcList = (data) => {
-                var bdcList = _.chain(data.results)
-                                .map((item) => {
-                                    return {name: item.firstname + " " + item.lastname,
-                                            id: item.id, login: item.login}
-                                })
-                                .sortBy((item) => return item.name)
-                                .value()
+            var bdcList = _.chain(data.results)
+                            .map((item) => {
+                                return {name: item.label,
+                                        login: item.shortLabel.replace(/_BDC/g, '')}
+                            })
+                            .sortBy((item) => {return item.login})
+                            .value()
 
             this.setState({bdcList: bdcList})
         }
@@ -51,13 +51,13 @@ class BDCList extends React.Component {
                 clickToSelect: true,
                 hideSelectColumn: true,
                 onSelect: (row, isSelected, event) => {
-                    window.location.assign(this.props.bdcUrl + row.id)
+                    window.location.assign(this.props.bdcUrl + row.login)
                 }
             }
 
             var bdcListTable = (
                 <BootstrapTable data={this.state.bdcList} striped={true} hover={true} selectRow={selectRowProp}
-                                options={{noDataText: __("Rien à afficher.")}}
+                                tableContainerClass="react-bs-table-list-bdc" options={{noDataText: __("Rien à afficher.")}}
                 >
                     <TableHeaderColumn dataField="login" isKey={true} width="100">{__("Code")}</TableHeaderColumn>
                     <TableHeaderColumn dataField="name">{__("Nom")}</TableHeaderColumn>
@@ -72,7 +72,7 @@ class BDCList extends React.Component {
                 <div className="row">
                     <div className="col-md-2">
                       <a href="/bdc/add">
-                        <button type="button" className="btn btn-success">{__("Nouveau bureau de change")}</button>
+                        <button type="button" className="btn btn-success">{__("Nouveau Bureau de change")}</button>
                       </a>
                     </div>
                 </div>
@@ -88,7 +88,7 @@ class BDCList extends React.Component {
 
 
 ReactDOM.render(
-    <BDCList bdcListUrl={getAPIBaseURL + "members/"} bdcUrl="/members/" method="GET" />,
+    <BDCList bdcListUrl={getAPIBaseURL + "bdc/"} bdcUrl="/bdc/manage/" method="GET" />,
     document.getElementById('bdc')
 )
 

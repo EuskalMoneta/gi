@@ -21,6 +21,8 @@ module.exports = Object.keys(languages).map(function(language) {
         entry: {
             Base: './static/js/base', // Your global app's entry point
             BDC: './static/js/bdc',
+            BDCShow: './static/js/bdc-show',
+            BDCCreate: './static/js/bdc-create',
             Coffre: './static/js/coffre',
             Login: './static/js/login',
         },
