@@ -33,7 +33,7 @@ ReactDOM.render(
 // The 'id' field is mandatory!
 const navbarObjects = [{href: '/coffre', label: __("Coffre"), id: 0},
                        {href: '/bdc', label: __("Bureaux de change"), id: 1},
-                       {href: '/comptesenbanque', label: __("Comptes en banque"), id: 2},
+                       {href: '/comptes', label: __("Comptes en banque"), id: 2},
                        {href: '/operations', label: __("Opérations à traiter"), id: 3},
                        ]
 

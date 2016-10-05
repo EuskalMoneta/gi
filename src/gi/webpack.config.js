@@ -25,6 +25,7 @@ module.exports = Object.keys(languages).map(function(language) {
             BDCManager: './static/js/bdc-manager',
             BDCCreate: './static/js/bdc-create',
             Coffre: './static/js/coffre',
+            ComptesEnBanque: './static/js/comptes',
             Operations: './static/js/operations',
             SortieCoffre: './static/js/sortie-coffre',
         },
@@ -111,7 +112,9 @@ module.exports = Object.keys(languages).map(function(language) {
             root: path.resolve(__dirname),
 
             alias: {
-                Utils: 'static/js/utils'
+                Utils: 'static/js/utils',
+                ComptesBanquesDepot: 'static/js/comptes-banques',
+                ComptesDedies: 'static/js/comptes-dedies',
             },
 
             // tells webpack where to look for modules
