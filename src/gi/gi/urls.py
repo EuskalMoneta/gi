@@ -42,6 +42,8 @@ urlpatterns = [
 
     # coffre
     url(r'^coffre/?$', coffre_views.index, name='coffre-home'),
+    # url(r'^coffre/entree/?$', coffre_views.entree, name='coffre-entree'),
+    url(r'^coffre/sortie/?$', coffre_views.sortie, name='coffre-sortie'),
 
     # bdc
     url(r'^bdc/?$', bdc_views.index, name='bdc-home'),
