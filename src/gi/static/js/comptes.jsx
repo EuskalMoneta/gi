@@ -33,8 +33,7 @@ class ComptesPage extends React.Component {
             this.setState({tabBanquesDepotsActive: false, tabComptesDediesActive: true})
     }
 
-    render()
-    {
+    render() {
         var tabBanquesDepotsActiveClass = classNames({
             'active': this.state.tabBanquesDepotsActive,
         })
@@ -55,8 +54,8 @@ class ComptesPage extends React.Component {
                     </ul>
                 </div>
                 <div className="row">
-                    <ComptesBanquesDepot active={this.state.tabBanquesDepotsActive} />
-                    <ComptesDedies active={this.state.tabComptesDediesActive} />
+                    <ComptesBanquesDepot initActive={this.state.tabBanquesDepotsActive} />
+                    <ComptesDedies initActive={this.state.tabComptesDediesActive} />
                 </div>
             </div>
         )
