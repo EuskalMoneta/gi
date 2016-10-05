@@ -53,7 +53,7 @@ var ComptesDedies = React.createClass({
                                     <span className="col-md-5">{this.state.balanceBillet + " EUS"}</span>
                                 </div>
                                 <div className="col-md-4">
-                                    <a href="/manager/history/stock-billets" className="btn btn-default">{__("Historique")}</a>
+                                    <a href="/comptes/history/billets" className="btn btn-default">{__("Historique")}</a>
                                 </div>
                             </div>
                         </div>
@@ -71,7 +71,7 @@ var ComptesDedies = React.createClass({
                                     <span className="col-md-5">{this.state.balanceNumerique + " EUS"}</span>
                                 </div>
                                 <div className="col-md-4">
-                                    <a href="/manager/history/stock-billets" className="btn btn-default">{__("Historique")}</a>
+                                    <a href="/comptes/history/numerique" className="btn btn-default">{__("Historique")}</a>
                                 </div>
                             </div>
                         </div>
