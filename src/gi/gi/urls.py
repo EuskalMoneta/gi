@@ -22,7 +22,7 @@ from base import views as base_views
 from bureauxdechange import views as bdc_views
 from coffre import views as coffre_views
 # from comptesenbanque import views as comptes_views
-# from operationsatraiter import views as operations_views
+from operationsatraiter import views as operations_views
 from gi.auth import login_view
 
 urlpatterns = [
@@ -49,6 +49,13 @@ urlpatterns = [
     url(r'^bdc/?$', bdc_views.index, name='bdc-home'),
     url(r'^bdc/add/?$', bdc_views.add, name='bdc-add'),
     url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/?$', bdc_views.show, name='bdc-show'),
+
+    # bdc
+    url(r'^operations/?$', operations_views.index, name='operations-home'),
+    # url(r'^operations/entrees-euro/?$', operations_views.entrees_euro, name='operations-entrees-euro'),
+    # url(r'^operations/entrees-eusko/?$', operations_views.entrees_eusko, name='operations-entrees-eusko'),
+    # url(r'^operations/reconversions/?$', operations_views.reconversions, name='operations-reconversions'),
+    # url(r'^operations/depots-retraits/?$', operations_views.depots_retraits, name='operations-depots-retraits'),
 
     # home
     url(r'^$', bdc_views.index, name='home'),

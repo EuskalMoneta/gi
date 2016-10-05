@@ -19,13 +19,14 @@ module.exports = Object.keys(languages).map(function(language) {
         // devtool: 'source-map',
 
         entry: {
-            Base: './static/js/base', // Your global app's entry point
+            Base: './static/js/base',
+            Login: './static/js/login',
             BDC: './static/js/bdc',
             BDCManager: './static/js/bdc-manager',
             BDCCreate: './static/js/bdc-create',
             Coffre: './static/js/coffre',
+            Operations: './static/js/operations',
             SortieCoffre: './static/js/sortie-coffre',
-            Login: './static/js/login',
         },
 
         output: {
