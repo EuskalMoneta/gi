@@ -10,3 +10,8 @@ def index(request):
 @login_required
 def sortie(request):
     return render(request, 'coffre/sortie.html')
+
+
+@login_required
+def entree(request):
+    return render(request, 'coffre/entree.html')
