@@ -55,8 +55,8 @@ urlpatterns = [
 
     # operations
     url(r'^operations/?$', operations_views.index, name='operations-home'),
-    # url(r'^operations/entrees-euro/?$', operations_views.entrees_euro, name='operations-entrees-euro'),
-    # url(r'^operations/entrees-eusko/?$', operations_views.entrees_eusko, name='operations-entrees-eusko'),
+    url(r'^operations/entrees-euro/?$', base_views.generic_history_validation, name='operations-entrees-euro'),
+    url(r'^operations/entrees-eusko/?$', base_views.generic_history_validation, name='operations-entrees-eusko'),
     # url(r'^operations/reconversions/?$', operations_views.reconversions, name='operations-reconversions'),
     # url(r'^operations/depots-retraits/?$', operations_views.depots_retraits, name='operations-depots-retraits'),
 

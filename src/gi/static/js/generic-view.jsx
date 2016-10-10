@@ -186,10 +186,28 @@ if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
     var propNextURL =  "/coffre"
     var propSaveURL =  getAPIBaseURL + "entree-coffre/"
     var propTranslateTitle = __("Entrée coffre")
-    var propCurrency = 'EUS'
 }
-else
-    window.location.assign("/");
+else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-euro") != -1)
+{
+    // URL = operations/entrees-euro
+    var propMode = "operations/entrees-euro"
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-entrees-euro/"
+    var propNextURL =  "/operations"
+    var propSaveURL =  getAPIBaseURL + "validate-entrees-euro/"
+    var propTranslateTitle = __("Entrées dans la Caisse €")
+}
+else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-eusko") != -1)
+{
+    // URL = operations/entrees-eusko
+    var propMode = "operations/entrees-eusko"
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-entrees-eusko/"
+    var propNextURL =  "/operations"
+    var propSaveURL =  getAPIBaseURL + "validate-entrees-eusko/"
+    var propTranslateTitle = __("Entrées dans la Caisse Eusko")
+}
+else {
+    window.location.assign("/")
+}
 
 ReactDOM.render(
     <GenericPage
@@ -197,7 +215,6 @@ ReactDOM.render(
             saveURL={propSaveURL}
             nextURL={propNextURL}
             mode={propMode}
-            currency={propCurrency}
     />,
     document.getElementById('generic-view')
 )
