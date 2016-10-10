@@ -55,3 +55,8 @@ def setlang_custom(request):
 @login_required
 def change_password(request):
     return render(request, 'change-password.html')
+
+
+@login_required
+def generic_history_validation(request):
+    return render(request, 'generic-history-validation.html')
