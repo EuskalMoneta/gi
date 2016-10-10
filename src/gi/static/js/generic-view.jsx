@@ -185,6 +185,7 @@ if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
     var propNextURL =  "/coffre"
     var propSaveURL =  getAPIBaseURL + "entree-coffre/"
     var propTranslateTitle = __("Entrée coffre")
+    var propCurrency = 'EUS'
 }
 else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-euro") != -1)
 {
@@ -194,6 +195,7 @@ else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-euro
     var propNextURL =  "/operations"
     var propSaveURL =  getAPIBaseURL + "validate-entrees-euro/"
     var propTranslateTitle = __("Entrées dans la Caisse €")
+    var propCurrency = '€'
 }
 else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-eusko") != -1)
 {
@@ -203,6 +205,7 @@ else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-eusk
     var propNextURL =  "/operations"
     var propSaveURL =  getAPIBaseURL + "validate-entrees-eusko/"
     var propTranslateTitle = __("Entrées dans la Caisse Eusko")
+    var propCurrency = 'EUS'
 }
 else if (window.location.pathname.toLowerCase().indexOf("banques/rapprochement") != -1)
 {
@@ -213,6 +216,7 @@ else if (window.location.pathname.toLowerCase().indexOf("banques/rapprochement")
     var propNextURL =  "/comptes"
     var propSaveURL =  getAPIBaseURL + "validate-banques-rapprochement/"
     var propTranslateTitle = __("Banques de dépôt : rapprochement")
+    var propCurrency = '€'
 }
 else if (window.location.pathname.toLowerCase().indexOf("banques/virement") != -1)
 {
@@ -223,6 +227,7 @@ else if (window.location.pathname.toLowerCase().indexOf("banques/virement") != -
     var propNextURL =  "/comptes"
     var propSaveURL =  getAPIBaseURL + "validate-banques-virement/"
     var propTranslateTitle = __("Banques de dépôt : virements")
+    var propCurrency = '€'
 }
 else {
     window.location.assign("/")
@@ -234,6 +239,7 @@ ReactDOM.render(
             saveURL={propSaveURL}
             nextURL={propNextURL}
             mode={propMode}
+            currency={propCurrency}
     />,
     document.getElementById('generic-view')
 )
