@@ -52,6 +52,10 @@ urlpatterns = [
 
     # comptesenbanque
     url(r'^comptes/?$', comptes_views.index, name='comptes-home'),
+    url(r'^banques/rapprochement/(?P<bank_name>[\w\-]+)?/?$',
+        base_views.generic_history_validation, name='banques-rapprochement'),
+    url(r'^banques/virement/(?P<bank_name>[\w\-]+)?/?$',
+        base_views.generic_history_validation, name='banques-virement'),
 
     # operations
     url(r'^operations/?$', operations_views.index, name='operations-home'),

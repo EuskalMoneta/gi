@@ -2,7 +2,7 @@ import {
     fetchAuth,
     getAPIBaseURL,
     NavbarTitle,
-    getCurrentLang
+    getCurrentLang,
 } from 'Utils'
 
 import {
@@ -69,7 +69,7 @@ var GenericPage = React.createClass({
     },
 
     validateForm() {
-        if (this.state.historyTableSelectedRows == Array())
+        if (this.state.historyTableSelectedRows.length > 0)
             this.enableButton()
         else
             this.disableButton()
@@ -79,7 +79,6 @@ var GenericPage = React.createClass({
         this.disableButton()
 
         var postData = {}
-        postData.login_bdc = window.config.userName
         postData.selected_payments = this.state.historyTableSelectedRows
 
         var computeForm = (data) => {
@@ -181,7 +180,7 @@ var GenericPage = React.createClass({
 if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
 {
     // URL = coffre/entree
-    var propMode = "entree-coffre"
+    var propMode = "coffre/entree"
     var propGetHistoryURL = getAPIBaseURL + "payments-available-entree-coffre/"
     var propNextURL =  "/coffre"
     var propSaveURL =  getAPIBaseURL + "entree-coffre/"
@@ -204,6 +203,26 @@ else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-eusk
     var propNextURL =  "/operations"
     var propSaveURL =  getAPIBaseURL + "validate-entrees-eusko/"
     var propTranslateTitle = __("Entrées dans la Caisse Eusko")
+}
+else if (window.location.pathname.toLowerCase().indexOf("banques/rapprochement") != -1)
+{
+    // URL = banques/rapprochement
+    var propMode = "banques/rapprochement"
+    var bankName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.length)
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-banques/?mode=rapprochement&bank_name=" + bankName
+    var propNextURL =  "/comptes"
+    var propSaveURL =  getAPIBaseURL + "validate-banques-rapprochement/"
+    var propTranslateTitle = __("Banques de dépôt : rapprochement")
+}
+else if (window.location.pathname.toLowerCase().indexOf("banques/virement") != -1)
+{
+    // URL = banques/virement
+    var propMode = "banques/virement"
+    var bankName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.length)
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-banques/?mode=virement&bank_name=" + bankName
+    var propNextURL =  "/comptes"
+    var propSaveURL =  getAPIBaseURL + "validate-banques-virement/"
+    var propTranslateTitle = __("Banques de dépôt : virements")
 }
 else {
     window.location.assign("/")

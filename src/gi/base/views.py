@@ -58,5 +58,5 @@ def change_password(request):
 
 
 @login_required
-def generic_history_validation(request):
+def generic_history_validation(request, **kwargs):
     return render(request, 'generic-history-validation.html')
