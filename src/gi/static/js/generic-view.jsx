@@ -70,9 +70,9 @@ var GenericPage = React.createClass({
 
     validateForm() {
         if (this.state.historyTableSelectedRows == Array())
-            this.disableButton()
-        else
             this.enableButton()
+        else
+            this.disableButton()
     },
 
     submitForm(data) {
