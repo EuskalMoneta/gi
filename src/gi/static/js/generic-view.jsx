@@ -23,7 +23,7 @@ var GenericPage = React.createClass({
     getInitialState() {
         return {
             canSubmit: false,
-            historyTableData: undefined,
+            historyTableData: Array(),
             historyTableSelectedRows: Array(),
         }
     },
@@ -93,14 +93,14 @@ var GenericPage = React.createClass({
                 }
             )
 
-            setTimeout(() => window.location.assign('/manager/history/stock-billets'), 3000)
+            setTimeout(() => window.location.assign(this.props.nextURL), 3000)
         }
 
         var promiseError = (err) => {
             // Error during request, or parsing NOK :(
             this.enableButton()
 
-            console.error(this.props.url, err)
+            console.error(this.props.saveURL, err)
             this.refs.container.error(
                 __("Une erreur s'est produite lors de l'enregistrement !"),
                 "",
@@ -123,34 +123,30 @@ var GenericPage = React.createClass({
         }
 
         // History data table
-        if (this.state.historyTableData) {
-            var dateFormatter = (cell, row) => {
-                // Force moment i18n
-                moment.locale(getCurrentLang)
-                return moment(cell).format('LLLL')
-            }
-
-            var amountFormatter = (cell, row) => {
-                // Cell is a string for now,
-                // we need to cast it in a Number object to use the toFixed method.
-                return Number(cell).toFixed(2)
-            }
-
-            var dataTable = (
-                <BootstrapTable
-                 data={this.state.historyTableData} striped={true} hover={true}
-                 selectRow={selectRowProp} tableContainerClass="react-bs-table-account-history"
-                 options={{noDataText: __("Rien à afficher.")}}
-                 >
-                    <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="date" dataFormat={dateFormatter}>{__("Date")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="description">{__("Libellé")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="amount" dataFormat={amountFormatter}>{__("Montant")}</TableHeaderColumn>
-                </BootstrapTable>
-            )
+        var dateFormatter = (cell, row) => {
+            // Force moment i18n
+            moment.locale(getCurrentLang)
+            return moment(cell).format('LLLL')
         }
-        else
-            var dataTable = null;
+
+        var amountFormatter = (cell, row) => {
+            // Cell is a string for now,
+            // we need to cast it in a Number object to use the toFixed method.
+            return Number(cell).toFixed(2)
+        }
+
+        var dataTable = (
+            <BootstrapTable
+             data={this.state.historyTableData} striped={true} hover={true}
+             selectRow={selectRowProp} tableContainerClass="react-bs-table-account-history"
+             options={{noDataText: __("Rien à afficher.")}}
+             >
+                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="date" dataFormat={dateFormatter}>{__("Date")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="description">{__("Libellé")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="amount" dataFormat={amountFormatter}>{__("Montant")}</TableHeaderColumn>
+            </BootstrapTable>
+        )
 
         return (
             <div className="row-fluid">
@@ -182,40 +178,23 @@ var GenericPage = React.createClass({
     }
 })
 
-if (window.location.pathname.toLowerCase().indexOf("cash-deposit") != -1)
+if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
 {
-    // URL = cash-deposit
-    var propMode = "cash-deposit"
-    var propGetHistoryURL =  "accounts-history/?account_type=caisse_euro_bdc&filter=a_remettre_a_euskal_moneta"
-    var propNextURL =  "/manager/history/caisse-euro"
-    var propTranslateTitle = __("Remise d'espèces")
-    var propCurrency = '€'
-}
-else if (window.location.pathname.toLowerCase().indexOf("sortie-caisse-eusko") != -1)
-{
-    // URL = sortie-caisse-eusko
-    var propMode =  "sortie-caisse-eusko"
-    var propGetHistoryURL =  "accounts-history/?account_type=caisse_eusko_bdc&filter=a_remettre_a_euskal_moneta"
-    var propNextURL =  "/manager/history/caisse-eusko"
-    var propTranslateTitle = __("Sortie caisse eusko")
-    var propCurrency = 'EUS'
-}
-else if (window.location.pathname.toLowerCase().indexOf("sortie-retour-eusko") != -1)
-{
-    // URL = sortie-caisse-eusko
-    var propMode =  "sortie-retour-eusko"
-    var propGetHistoryURL =  "accounts-history/?account_type=retours_d_eusko_bdc&filter=a_remettre_a_euskal_moneta"
-    var propNextURL =  "/manager/history/retour-eusko"
-    var propTranslateTitle = __("Sortie retours d'eusko")
+    // URL = coffre/entree
+    var propMode = "entree-coffre"
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-entree-coffre/"
+    var propNextURL =  "/coffre"
+    var propSaveURL =  getAPIBaseURL + "entree-coffre/"
+    var propTranslateTitle = __("Entrée coffre")
     var propCurrency = 'EUS'
 }
 else
-    window.location.assign("/manager");
+    window.location.assign("/");
 
 ReactDOM.render(
     <GenericPage
-            historyURL={getAPIBaseURL + propGetHistoryURL}
-            saveURL={getAPIBaseURL + propMode + "/"}
+            historyURL={propGetHistoryURL}
+            saveURL={propSaveURL}
             nextURL={propNextURL}
             mode={propMode}
             currency={propCurrency}
@@ -224,6 +203,6 @@ ReactDOM.render(
 )
 
 ReactDOM.render(
-    <NavbarTitle title={__("Entrée stock BDC")} />,
+    <NavbarTitle title={propTranslateTitle} />,
     document.getElementById('navbar-title')
 )
