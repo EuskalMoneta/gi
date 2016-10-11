@@ -29,6 +29,11 @@ module.exports = Object.keys(languages).map(function(language) {
             ComptesEnBanque: './static/js/comptes',
             Operations: './static/js/operations',
             SortieCoffre: './static/js/sortie-coffre',
+            EntreeStock: './static/js/entree-stock',
+            SortieStock: './static/js/sortie-stock',
+            BDCHistory: './static/js/bdc-history',
+            BankDeposit: './static/js/bank-deposit',
+            CashDeposit: './static/js/cash-deposit',
         },
 
         output: {

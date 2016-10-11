@@ -82,15 +82,15 @@ var StockBillets = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/stock-billets" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/stock-billets"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/entree-stock" className="btn btn-info">{__("Entrée")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/entree-stock"} className="btn btn-info">{__("Entrée")}</a>
                         </div>
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/sortie-stock" className="btn btn-default">{__("Sortie")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/sortie-stock"} className="btn btn-default">{__("Sortie")}</a>
                         </div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@ var CaisseEuro = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/caisse-euro" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/caisse-euro"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                      <div className="row">
@@ -216,10 +216,10 @@ var CaisseEuro = React.createClass({
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/bank-deposit" className="btn btn-info">{__("Dépôt en banque")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/bank-deposit"} className="btn btn-info">{__("Dépôt en banque")}</a>
                         </div>
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/cash-deposit" className="btn btn-default">{__("Remise d'espèces")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/cash-deposit"} className="btn btn-default">{__("Remise d'espèces")}</a>
                         </div>
                     </div>
                 </div>
@@ -256,12 +256,12 @@ var CaisseEusko = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/caisse-eusko" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "history/caisse-eusko"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/sortie-caisse-eusko" className="btn btn-info">{__("Sortie")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/sortie-caisse-eusko"} className="btn btn-info">{__("Sortie")}</a>
                         </div>
                     </div>
                 </div>
@@ -298,12 +298,12 @@ var RetourEusko = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/retour-eusko" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/retour-eusko"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/sortie-retour-eusko" className="btn btn-info">{__("Sortie")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/sortie-retour-eusko"} className="btn btn-info">{__("Sortie")}</a>
                         </div>
                     </div>
                 </div>

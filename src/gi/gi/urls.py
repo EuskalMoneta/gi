@@ -49,6 +49,16 @@ urlpatterns = [
     url(r'^bdc/?$', bdc_views.index, name='bdc-home'),
     url(r'^bdc/add/?$', bdc_views.add, name='bdc-add'),
     url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/?$', bdc_views.show, name='bdc-show'),
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/history/(?P<account_name>[\w\-]+)/?$',
+        bdc_views.history, name='manager-history'),
+
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/entree-stock/?$', bdc_views.entree_stock, name='entree-stock'),
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/sortie-stock/?$', bdc_views.sortie_stock, name='sortie-stock'),
+
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/bank-deposit/?$', bdc_views.bank_deposit, name='bank-deposit'),
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/cash-deposit/?$', bdc_views.cash_deposit, name='cash-deposit'),
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/sortie-caisse-eusko/?$', bdc_views.cash_deposit, name='sortie-caisse-eusko'),
+    url(r'^bdc/manage/(?P<bdc_id>[\w\-]+)/sortie-retour-eusko/?$', bdc_views.cash_deposit, name='sortie-retour-eusko'),
 
     # comptesenbanque
     url(r'^comptes/?$', comptes_views.index, name='comptes-home'),
