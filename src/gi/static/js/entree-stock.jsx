@@ -70,17 +70,17 @@ var EntreeStockPage = React.createClass({
     },
 
     validateForm() {
-        if (this.state.historyTableSelectedRows == Array())
-            this.disableButton()
-        else
+        if (this.state.historyTableSelectedRows.length > 0)
             this.enableButton()
+        else
+            this.disableButton()
     },
 
     submitForm(data) {
         this.disableButton()
 
         var postData = {}
-        postData.login_bdc = window.config.userName
+        postData.login_bdc = this.props.loginBDC
         postData.selected_payments = this.state.historyTableSelectedRows
 
         var computeForm = (data) => {
@@ -94,7 +94,7 @@ var EntreeStockPage = React.createClass({
                 }
             )
 
-            setTimeout(() => window.location.assign('/manager/history/stock-billets'), 3000)
+            setTimeout(() => window.location.assign('/bdc/manage/' + this.props.loginBDC), 3000)
         }
 
         var promiseError = (err) => {
@@ -190,6 +190,7 @@ ReactDOM.render(
     <EntreeStockPage
             historyURL={getAPIBaseURL + "payments-available-entree-stock/?login_bdc=" + login_bdc}
             saveURL={getAPIBaseURL + "entree-stock/"}
+            loginBDC={login_bdc}
     />,
     document.getElementById('entree-stock')
 )
