@@ -25,12 +25,6 @@ class BDCManage extends React.Component {
         // Caisse eusko: caisse_eusko_bdc
         // Retour eusko: retours_d_eusko_bdc
 
-        // Get bdc data
-        // var computeBdcData = (bdc) => {
-        //     this.setState({bdc: bdc})
-        // }
-        // fetchAuth(this.props.url + this.state.bdcID + '/', 'get', computeBdcData)
-
         var computeManagerData = (data) => {
             this.setState({
                 stockBilletsData: _.filter(data, (item) => { return item.type.id == "stock_de_billets_bdc" })[0],
@@ -45,6 +39,7 @@ class BDCManage extends React.Component {
     render() {
         return (
             <div className="col-md-10">
+                <DisplayBDC />
                 <StockBillets data={this.state.stockBilletsData} bdcID={this.state.bdcID} />
                 <CaisseEuro data={this.state.caisseEuroData} bdcID={this.state.bdcID} />
                 <CaisseEusko data={this.state.caisseEuskoData} bdcID={this.state.bdcID} />
@@ -53,6 +48,34 @@ class BDCManage extends React.Component {
         )
     }
 }
+
+var DisplayBDC = React.createClass({
+    getInitialState() {
+        return {
+            bdcID: document.getElementById("bdc_id").value,
+            bdcName: undefined,
+        }
+    },
+
+    componentDidMount() {
+        // Get bdc data
+        var computeBdcData = (bdc) => {
+            this.setState({bdcName: bdc.lastname})
+        }
+        fetchAuth(getAPIBaseURL + "user-data/?username=" + this.state.bdcID, 'get', computeBdcData)
+    },
+
+    render() {
+        return (
+            <div className="row margin-bottom">
+                <div className="col-sm-6">
+                    <label className="control-label col-sm-6">{__("Bureau de change") + " : "}</label>
+                    <span>{this.state.bdcID + " - " + this.state.bdcName}</span>
+                </div>
+            </div>
+        )
+    }
+})
 
 var StockBillets = React.createClass({
     getInitialState() {
@@ -314,7 +337,7 @@ var RetourEusko = React.createClass({
 
 
 ReactDOM.render(
-    <BDCManage url={getAPIBaseURL + "bdc/"} method="GET" />,
+    <BDCManage />,
     document.getElementById('bdc-show')
 )
 
