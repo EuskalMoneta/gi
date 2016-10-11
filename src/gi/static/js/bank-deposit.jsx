@@ -519,7 +519,7 @@ var BankDepositPage = React.createClass({
                                 label={__("Montant")}
                                 type="number"
                                 placeholder={__("Montant du dépôt")}
-                                validaions="isPositiveNumeric"
+                                validations="isPositiveNumeric"
                                 validationErrors={{
                                     isPositiveNumeric: __("Montant invalide.")
                                 }}
