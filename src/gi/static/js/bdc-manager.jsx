@@ -25,12 +25,6 @@ class BDCManage extends React.Component {
         // Caisse eusko: caisse_eusko_bdc
         // Retour eusko: retours_d_eusko_bdc
 
-        // Get bdc data
-        // var computeBdcData = (bdc) => {
-        //     this.setState({bdc: bdc})
-        // }
-        // fetchAuth(this.props.url + this.state.bdcID + '/', 'get', computeBdcData)
-
         var computeManagerData = (data) => {
             this.setState({
                 stockBilletsData: _.filter(data, (item) => { return item.type.id == "stock_de_billets_bdc" })[0],
@@ -45,6 +39,7 @@ class BDCManage extends React.Component {
     render() {
         return (
             <div className="col-md-10">
+                <DisplayBDC />
                 <StockBillets data={this.state.stockBilletsData} bdcID={this.state.bdcID} />
                 <CaisseEuro data={this.state.caisseEuroData} bdcID={this.state.bdcID} />
                 <CaisseEusko data={this.state.caisseEuskoData} bdcID={this.state.bdcID} />
@@ -53,6 +48,34 @@ class BDCManage extends React.Component {
         )
     }
 }
+
+var DisplayBDC = React.createClass({
+    getInitialState() {
+        return {
+            bdcID: document.getElementById("bdc_id").value,
+            bdcName: undefined,
+        }
+    },
+
+    componentDidMount() {
+        // Get bdc data
+        var computeBdcData = (bdc) => {
+            this.setState({bdcName: bdc.lastname})
+        }
+        fetchAuth(getAPIBaseURL + "user-data/?username=" + this.state.bdcID, 'get', computeBdcData)
+    },
+
+    render() {
+        return (
+            <div className="row margin-bottom">
+                <div className="col-sm-6">
+                    <label className="control-label col-sm-6">{__("Bureau de change") + " : "}</label>
+                    <span>{this.state.bdcID + " - " + this.state.bdcName}</span>
+                </div>
+            </div>
+        )
+    }
+})
 
 var StockBillets = React.createClass({
     getInitialState() {
@@ -82,15 +105,15 @@ var StockBillets = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/stock-billets" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/stock-billets"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/entree-stock" className="btn btn-info">{__("Entrée")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/entree-stock"} className="btn btn-info">{__("Entrée")}</a>
                         </div>
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/sortie-stock" className="btn btn-default">{__("Sortie")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/sortie-stock"} className="btn btn-default">{__("Sortie")}</a>
                         </div>
                     </div>
                 </div>
@@ -175,7 +198,7 @@ var CaisseEuro = React.createClass({
         fetchAuth(getAPIBaseURL +
                   "accounts-history/?account_type=caisse_euro_bdc&" +
                   "filter=a_remettre_a_euskal_moneta&" +
-                  "direction=CREDIT&bdc_login=" + this.props.bdcID,
+                  "direction=CREDIT&login_bdc=" + this.props.bdcID,
                   'get', computeData)
     },
 
@@ -199,7 +222,7 @@ var CaisseEuro = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/caisse-euro" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/caisse-euro"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                      <div className="row">
@@ -216,10 +239,10 @@ var CaisseEuro = React.createClass({
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/bank-deposit" className="btn btn-info">{__("Dépôt en banque")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/bank-deposit"} className="btn btn-info">{__("Dépôt en banque")}</a>
                         </div>
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/cash-deposit" className="btn btn-default">{__("Remise d'espèces")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/cash-deposit"} className="btn btn-default">{__("Remise d'espèces")}</a>
                         </div>
                     </div>
                 </div>
@@ -256,12 +279,12 @@ var CaisseEusko = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/caisse-eusko" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/caisse-eusko"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/sortie-caisse-eusko" className="btn btn-info">{__("Sortie")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/sortie-caisse-eusko"} className="btn btn-info">{__("Sortie")}</a>
                         </div>
                     </div>
                 </div>
@@ -298,12 +321,12 @@ var RetourEusko = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href="/manager/history/retour-eusko" className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/retour-eusko"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-offset-2 col-md-2 col-sm-4">
-                            <a href="/manager/sortie-retour-eusko" className="btn btn-info">{__("Sortie")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/sortie-retour-eusko"} className="btn btn-info">{__("Sortie")}</a>
                         </div>
                     </div>
                 </div>
@@ -314,7 +337,7 @@ var RetourEusko = React.createClass({
 
 
 ReactDOM.render(
-    <BDCManage url={getAPIBaseURL + "bdc/"} method="GET" />,
+    <BDCManage />,
     document.getElementById('bdc-show')
 )
 
