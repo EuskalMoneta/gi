@@ -70,10 +70,10 @@ class SortieStockPage extends React.Component {
 
         // Get bdc name
         var computeData = (data) => {
-            this.setState({bdcName: data,
-                           textareaDescription: this.state.textareaDescription.replace(" - _",  " - " + data)})
+            this.setState({bdcName: data.lastname,
+                           textareaDescription: this.state.textareaDescription.replace(" - _",  " - " + data.lastname)})
         }
-        fetchAuth(getAPIBaseURL + "bdc-name/", 'get', computeData)
+        fetchAuth(getAPIBaseURL + "user-data/?username=" + this.props.loginBDC, 'get', computeData)
     }
 
     // porteur
@@ -111,6 +111,7 @@ class SortieStockPage extends React.Component {
         this.disableButton()
 
         data.porteur = this.state.porteur.value
+        data.login_bdc = this.props.loginBDC
         console.log(data)
 
         var computeForm = (response) => {
@@ -124,7 +125,7 @@ class SortieStockPage extends React.Component {
                 }
             )
 
-            setTimeout(() => window.location.assign('/manager/history/stock-billets'), 3000)
+            setTimeout(() => window.location.assign('/bdc/manage/' + this.props.loginBDC), 3000)
         }
 
         var promiseError = (err) => {
@@ -238,12 +239,20 @@ class SortieStockPage extends React.Component {
 
 var propURL = getAPIBaseURL + "sortie-stock/"
 var propTitle = "Sortie stock BDC"
-var propTextareaDescription = "Sortie stock - " + window.config.userName + " - _"
 var propTranslateTitle = __("Sortie stock BDC")
 var propTranslateButton = __("Enregistrer la sortie stock")
+var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+                                               window.location.pathname.lastIndexOf('/sortie-stock'))
+var propTextareaDescription = "Sortie stock - " + loginBDC + " - _"
+
 
 ReactDOM.render(
-    <SortieStockPage url={propURL} textarea_description={propTextareaDescription} validate_button={propTranslateButton} />,
+    <SortieStockPage
+        url={propURL}
+        textarea_description={propTextareaDescription}
+        validate_button={propTranslateButton}
+        loginBDC={loginBDC}
+    />,
     document.getElementById('sortie-stock')
 )
 
