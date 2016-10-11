@@ -175,7 +175,7 @@ var CaisseEuro = React.createClass({
         fetchAuth(getAPIBaseURL +
                   "accounts-history/?account_type=caisse_euro_bdc&" +
                   "filter=a_remettre_a_euskal_moneta&" +
-                  "direction=CREDIT&bdc_login=" + this.props.bdcID,
+                  "direction=CREDIT&login_bdc=" + this.props.bdcID,
                   'get', computeData)
     },
 
