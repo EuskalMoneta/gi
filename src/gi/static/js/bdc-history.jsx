@@ -57,10 +57,12 @@ var ManagerHistoryPage = React.createClass({
                     };
 
                     // Get account history
-                    fetchAuth(getAPIBaseURL + "accounts-history/?account_type=" + this.props.mode, 'get', computeHistoryList)
+                    fetchAuth(getAPIBaseURL +
+                              "accounts-history/?login_bdc=" + this.state.bdcID +
+                              "&account_type=" + this.props.mode, 'get', computeHistoryList)
                 });
         }
-        fetchAuth(getAPIBaseURL + "accounts-summaries/", 'get', computeHistoryData)
+        fetchAuth(getAPIBaseURL + "accounts-summaries/" + this.state.bdcID, 'get', computeHistoryData)
     },
 
     render() {
@@ -80,10 +82,10 @@ var ManagerHistoryPage = React.createClass({
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-2 col-md-2 col-sm-4">
-                        <a href="/manager/entree-stock" className="btn btn-info">{__("Entrée")}</a>
+                        <a href={"/bdc/manage/" + this.props.loginBDC + "/entree-stock"} className="btn btn-info">{__("Entrée")}</a>
                     </div>
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
-                        <a href="/manager/sortie-stock" className="btn btn-default">{__("Sortie")}</a>
+                        <a href={"/bdc/manage/" + this.props.loginBDC + "/sortie-stock"} className="btn btn-default">{__("Sortie")}</a>
                     </div>
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
                         <label className="control-label col-md-12 solde-history-label">
@@ -98,10 +100,10 @@ var ManagerHistoryPage = React.createClass({
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-2 col-md-2 col-sm-4">
-                        <a href="/manager/bank-deposit" className="btn btn-info">{__("Dépôt en banque")}</a>
+                        <a href={"/bdc/manage/" + this.props.loginBDC + "/bank-deposit"} className="btn btn-info">{__("Dépôt en banque")}</a>
                     </div>
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
-                        <a href="/manager/cash-deposit" className="btn btn-default">{__("Remise d'espèces")}</a>
+                        <a href={"/bdc/manage/" + this.props.loginBDC + "/cash-deposit"} className="btn btn-default">{__("Remise d'espèces")}</a>
                     </div>
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
                         <label className="control-label col-md-12 solde-history-label">
@@ -116,7 +118,7 @@ var ManagerHistoryPage = React.createClass({
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-2 col-md-2 col-sm-4">
-                        <a href="/manager/sortie-caisse-eusko" className="btn btn-info">{__("Sortie")}</a>
+                        <a href={"/bdc/manage/" + this.props.loginBDC + "/sortie-caisse-eusko"} className="btn btn-info">{__("Sortie")}</a>
                     </div>
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
                         <label className="control-label col-md-12 solde-history-label">
@@ -131,7 +133,7 @@ var ManagerHistoryPage = React.createClass({
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-2 col-md-2 col-sm-4">
-                        <a href="/manager/sortie-retour-eusko" className="btn btn-info">{__("Sortie")}</a>
+                        <a href={"/bdc/manage/" + this.props.loginBDC + "/sortie-retour-eusko"} className="btn btn-info">{__("Sortie")}</a>
                     </div>
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
                         <label className="control-label col-md-12 solde-history-label">
@@ -217,9 +219,15 @@ else
     window.location.assign("/manager");
 
 
+var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+                                               window.location.pathname.lastIndexOf('/history'))
 
 ReactDOM.render(
-    <ManagerHistoryPage url={url} mode={mode} />,
+    <ManagerHistoryPage
+        url={url}
+        mode={mode}
+        loginBDC={loginBDC}
+    />,
     document.getElementById('manager-history')
 )
 
