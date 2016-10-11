@@ -256,7 +256,7 @@ var CaisseEusko = React.createClass({
                             <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
-                            <a href={"/bdc/manage/" + this.props.bdcID + "history/caisse-eusko"} className="btn btn-default">{__("Historique")}</a>
+                            <a href={"/bdc/manage/" + this.props.bdcID + "/history/caisse-eusko"} className="btn btn-default">{__("Historique")}</a>
                         </div>
                     </div>
                     <div className="row margin-top">
