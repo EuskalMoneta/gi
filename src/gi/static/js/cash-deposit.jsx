@@ -144,7 +144,7 @@ var CashDepositPage = React.createClass({
         this.disableButton()
 
         var postData = {}
-        postData.login_bdc = window.config.userName
+        postData.login_bdc = this.state.bdcID
         postData.deposit_amount = this.state.depositCalculatedAmount
         postData.selected_payments = this.state.historyTableSelectedRows
 
@@ -311,7 +311,7 @@ var CashDepositPage = React.createClass({
 if (window.location.pathname.toLowerCase().indexOf("cash-deposit") != -1)
 {
     var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
-                                                   window.location.pathname.lastIndexOf('/cash-deposit'))
+                                                  window.location.pathname.lastIndexOf('/cash-deposit'))
     // URL = cash-deposit
     var propMode = "cash-deposit"
     var propGetHistoryURL = "accounts-history/?login_bdc=" + loginBDC +
@@ -324,7 +324,7 @@ if (window.location.pathname.toLowerCase().indexOf("cash-deposit") != -1)
 else if (window.location.pathname.toLowerCase().indexOf("sortie-caisse-eusko") != -1)
 {
     var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
-                                                   window.location.pathname.lastIndexOf('/sortie-caisse-eusko'))
+                                                  window.location.pathname.lastIndexOf('/sortie-caisse-eusko'))
     // URL = sortie-caisse-eusko
     var propMode = "sortie-caisse-eusko"
     var propGetHistoryURL =  "accounts-history/?login_bdc=" + loginBDC +
@@ -337,7 +337,7 @@ else if (window.location.pathname.toLowerCase().indexOf("sortie-caisse-eusko") !
 else if (window.location.pathname.toLowerCase().indexOf("sortie-retour-eusko") != -1)
 {
     var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
-                                                   window.location.pathname.lastIndexOf('/sortie-retour-eusko'))
+                                                  window.location.pathname.lastIndexOf('/sortie-retour-eusko'))
     // URL = sortie-retour-eusko
     var propMode = "sortie-retour-eusko"
     var propGetHistoryURL =  "accounts-history/?login_bdc=" + loginBDC +
