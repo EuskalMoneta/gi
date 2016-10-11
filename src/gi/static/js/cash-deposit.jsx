@@ -307,30 +307,43 @@ var CashDepositPage = React.createClass({
     }
 })
 
+
 if (window.location.pathname.toLowerCase().indexOf("cash-deposit") != -1)
 {
+    var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+                                                   window.location.pathname.lastIndexOf('/cash-deposit'))
     // URL = cash-deposit
     var propMode = "cash-deposit"
-    var propGetHistoryURL =  "accounts-history/?account_type=caisse_euro_bdc&filter=a_remettre_a_euskal_moneta"
-    var propNextURL =  "/manager/history/caisse-euro"
+    var propGetHistoryURL = "accounts-history/?login_bdc=" + loginBDC +
+        "&account_type=caisse_euro_bdc" +
+        "&filter=a_remettre_a_euskal_moneta"
+    var propNextURL = "/bdc/manage/" + loginBDC + "/history/caisse-euro"
     var propTranslateTitle = __("Remise d'espèces")
     var propCurrency = '€'
 }
 else if (window.location.pathname.toLowerCase().indexOf("sortie-caisse-eusko") != -1)
 {
+    var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+                                                   window.location.pathname.lastIndexOf('/sortie-caisse-eusko'))
     // URL = sortie-caisse-eusko
-    var propMode =  "sortie-caisse-eusko"
-    var propGetHistoryURL =  "accounts-history/?account_type=caisse_eusko_bdc&filter=a_remettre_a_euskal_moneta"
-    var propNextURL =  "/manager/history/caisse-eusko"
+    var propMode = "sortie-caisse-eusko"
+    var propGetHistoryURL =  "accounts-history/?login_bdc=" + loginBDC +
+        "&account_type=caisse_eusko_bdc" +
+        "&filter=a_remettre_a_euskal_moneta"
+    var propNextURL = "/bdc/manage/" + loginBDC + "/history/caisse-eusko"
     var propTranslateTitle = __("Sortie caisse eusko")
     var propCurrency = 'EUS'
 }
 else if (window.location.pathname.toLowerCase().indexOf("sortie-retour-eusko") != -1)
 {
-    // URL = sortie-caisse-eusko
-    var propMode =  "sortie-retour-eusko"
-    var propGetHistoryURL =  "accounts-history/?account_type=retours_d_eusko_bdc&filter=a_remettre_a_euskal_moneta"
-    var propNextURL =  "/manager/history/retour-eusko"
+    var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+                                                   window.location.pathname.lastIndexOf('/sortie-retour-eusko'))
+    // URL = sortie-retour-eusko
+    var propMode = "sortie-retour-eusko"
+    var propGetHistoryURL =  "accounts-history/?login_bdc=" + loginBDC +
+        "&account_type=retours_d_eusko_bdc" +
+        "&filter=a_remettre_a_euskal_moneta"
+    var propNextURL = "/bdc/manage/" + loginBDC + "/history/retour-eusko"
     var propTranslateTitle = __("Sortie retours d'eusko")
     var propCurrency = 'EUS'
 }
@@ -344,6 +357,7 @@ ReactDOM.render(
                      getHistory={getAPIBaseURL + propGetHistoryURL}
                      nextURL={propNextURL}
                      currency={propCurrency}
+                     loginBDC={loginBDC}
     />,
     document.getElementById('cash-deposit')
 )
