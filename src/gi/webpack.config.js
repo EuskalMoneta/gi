@@ -25,6 +25,7 @@ module.exports = Object.keys(languages).map(function(language) {
             BDCManager: './static/js/bdc-manager',
             BDCCreate: './static/js/bdc-create',
             Coffre: './static/js/coffre',
+            GenericView: './static/js/generic-view',
             ComptesEnBanque: './static/js/comptes',
             Operations: './static/js/operations',
             SortieCoffre: './static/js/sortie-coffre',

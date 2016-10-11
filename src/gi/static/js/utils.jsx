@@ -1,7 +1,13 @@
 var checkStatus = (response) => {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status != 204 && response.status >= 200 && response.status < 300) {
         return response
-    } else {
+    }
+    else if (response.status == 204) {
+        var error = new Error("No content")
+        error.response = response
+        throw error
+    }
+    else {
         var error = new Error(response.statusText)
         error.response = response
         throw error
@@ -40,7 +46,9 @@ var fetchCustom = (url, method, promise, token, data, promiseError=null) => {
     if (!promiseError) {
         var promiseError = (err) => {
             // Error during request, or parsing NOK :(
-            console.error(url, method, promise, token, data, promiseError, err)
+            if (err.message != "No content") {
+                console.error(url, method, promise, token, data, promiseError, err)
+            }
         }
     }
 

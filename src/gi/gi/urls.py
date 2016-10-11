@@ -42,7 +42,7 @@ urlpatterns = [
 
     # coffre
     url(r'^coffre/?$', coffre_views.index, name='coffre-home'),
-    # url(r'^coffre/entree/?$', coffre_views.entree, name='coffre-entree'),
+    url(r'^coffre/entree/?$', base_views.generic_history_validation, name='coffre-entree'),
     url(r'^coffre/sortie/?$', coffre_views.sortie, name='coffre-sortie'),
 
     # bdc
@@ -52,11 +52,15 @@ urlpatterns = [
 
     # comptesenbanque
     url(r'^comptes/?$', comptes_views.index, name='comptes-home'),
+    url(r'^banques/rapprochement/(?P<bank_name>[\w\-]+)?/?$',
+        base_views.generic_history_validation, name='banques-rapprochement'),
+    url(r'^banques/virement/(?P<bank_name>[\w\-]+)?/?$',
+        base_views.generic_history_validation, name='banques-virement'),
 
     # operations
     url(r'^operations/?$', operations_views.index, name='operations-home'),
-    # url(r'^operations/entrees-euro/?$', operations_views.entrees_euro, name='operations-entrees-euro'),
-    # url(r'^operations/entrees-eusko/?$', operations_views.entrees_eusko, name='operations-entrees-eusko'),
+    url(r'^operations/entrees-euro/?$', base_views.generic_history_validation, name='operations-entrees-euro'),
+    url(r'^operations/entrees-eusko/?$', base_views.generic_history_validation, name='operations-entrees-eusko'),
     # url(r'^operations/reconversions/?$', operations_views.reconversions, name='operations-reconversions'),
     # url(r'^operations/depots-retraits/?$', operations_views.depots_retraits, name='operations-depots-retraits'),
 
