@@ -103,9 +103,10 @@ var BankDepositPage = React.createClass({
                            historyTableInitData: historyTableData.result.pageItems}, this.computeAmount)
         }
         fetchAuth(getAPIBaseURL +
-                  "accounts-history/?account_type=caisse_euro_bdc&" +
-                  "filter=a_remettre_a_euskal_moneta&" +
-                  "direction=CREDIT",
+                  "accounts-history/?login_bdc=" + this.state.bdcID +
+                  "&account_type=caisse_euro_bdc" +
+                  "&filter=a_remettre_a_euskal_moneta" +
+                  "&direction=CREDIT",
                   'get', computeHistoryTableData)
     },
 
@@ -293,7 +294,7 @@ var BankDepositPage = React.createClass({
         this.disableButton()
 
         var postData = {}
-        postData.login_bdc = window.config.userName
+        postData.login_bdc = this.state.bdcID
         postData.payment_mode = this.state.paymentMode.cyclos_id
         postData.payment_mode_name = this.state.paymentMode.label
         postData.deposit_bank = this.state.depositBank.value
@@ -315,7 +316,7 @@ var BankDepositPage = React.createClass({
                 }
             )
 
-            setTimeout(() => window.location.assign("/manager/history/caisse-euro"), 3000)
+            setTimeout(() => window.location.assign("/bdc/manage/" + this.state.bdcID + "/history/caisse-euro"), 3000)
         }
 
         var promiseError = (err) => {
