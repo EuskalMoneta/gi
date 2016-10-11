@@ -183,14 +183,14 @@ var EntreeStockPage = React.createClass({
     }
 })
 
-var login_bdc = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
                                                window.location.pathname.lastIndexOf('/entree-stock'))
 
 ReactDOM.render(
     <EntreeStockPage
-            historyURL={getAPIBaseURL + "payments-available-entree-stock/?login_bdc=" + login_bdc}
+            historyURL={getAPIBaseURL + "payments-available-entree-stock/?login_bdc=" + loginBDC}
             saveURL={getAPIBaseURL + "entree-stock/"}
-            loginBDC={login_bdc}
+            loginBDC={loginBDC}
     />,
     document.getElementById('entree-stock')
 )
