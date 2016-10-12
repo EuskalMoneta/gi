@@ -4,6 +4,20 @@ import {
     NavbarTitle,
 } from 'Utils'
 
+import {
+    Modal,
+    ModalHeader,
+    ModalTitle,
+    ModalClose,
+    ModalBody,
+    ModalFooter
+} from 'react-modal-bootstrap'
+
+const {
+    ToastContainer
+} = ReactToastr
+const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation)
+
 class BDCManage extends React.Component {
     constructor(props) {
         super(props)
@@ -53,24 +67,108 @@ var DisplayBDC = React.createClass({
     getInitialState() {
         return {
             bdcID: document.getElementById("bdc_id").value,
-            bdcName: undefined,
+            bdcName: '',
+            isModalOpen: false,
         }
     },
 
     componentDidMount() {
         // Get bdc data
         var computeBdcData = (bdc) => {
-            this.setState({bdcName: bdc.lastname})
+            this.setState({bdcName: bdc.lastname, bdcOperatorID: bdc.id})
         }
         fetchAuth(getAPIBaseURL + "user-data/?username=" + this.state.bdcID, 'get', computeBdcData)
+    },
+
+    handleDeleteBDC() {
+        if (!this.state.bdcID)
+        {
+            this.hideModal()
+
+            this.refs.container.error(
+                __("Une erreur s'est produite lors de la fermeture du BDC !"),
+                "",
+                {
+                    timeOut: 5000,
+                    extendedTimeOut: 10000,
+                    closeButton:true
+                }
+            )
+        }
+
+        // delete Bdc promise
+        var deleteBdcPromise = (bdc) => {
+            this.hideModal()
+
+            this.refs.container.success(
+                __("La fermeture du BDC s'est déroulée correctement."),
+                "",
+                {
+                    timeOut: 5000,
+                    extendedTimeOut: 10000,
+                    closeButton:true
+                }
+            )
+
+            setTimeout(() => window.location.assign("/bdc"), 3000)
+        }
+
+        var promiseError = (err) => {
+            // Error during request, or parsing NOK :(
+            this.hideModal()
+
+            console.error(getAPIBaseURL + "close-bdc/" + this.state.bdcID, 'DELETE', err)
+            this.refs.container.error(
+                __("Une erreur s'est produite lors de la fermeture du BDC !"),
+                "",
+                {
+                    timeOut: 5000,
+                    extendedTimeOut: 10000,
+                    closeButton:true
+                }
+            )
+        }
+        fetchAuth(getAPIBaseURL + "close-bdc/" + this.state.bdcID, 'DELETE', deleteBdcPromise, null, promiseError)
+    },
+
+    openModal() {
+        this.setState({isModalOpen: true})
+    },
+
+    hideModal() {
+        this.setState({isModalOpen: false})
     },
 
     render() {
         return (
             <div className="row margin-bottom">
+                <Modal isOpen={this.state.isModalOpen} onRequestHide={this.hideModal}>
+                    <ModalHeader>
+                        <ModalClose onClick={this.hideModal}/>
+                        <ModalTitle>{__("Fermer un bureau de change ?")}</ModalTitle>
+                    </ModalHeader>
+                    <ModalBody>
+                        <p>{__("Voulez-vous fermer le bureau de change") + " " + this.state.bdcID + " ?"}</p>
+                    </ModalBody>
+                    <ModalFooter>
+                        <button className="btn btn-default" onClick={this.hideModal}>
+                          {__("Annuler")}
+                        </button>
+                        <button onClick={this.handleDeleteBDC} className="btn btn-danger">
+                          {__("Fermer ce BDC")}
+                        </button>
+                    </ModalFooter>
+                </Modal>
+                <ToastContainer ref="container"
+                                toastMessageFactory={ToastMessageFactory}
+                                className="toast-top-right toast-top-right-navbar"
+                />
                 <div className="col-sm-6">
                     <label className="control-label col-sm-6">{__("Bureau de change") + " : "}</label>
                     <span>{this.state.bdcID + " - " + this.state.bdcName}</span>
+                </div>
+                <div className="col-sm-6">
+                    <a onClick={this.openModal} className="btn btn-danger">{__("Fermer ce BDC")}</a>
                 </div>
             </div>
         )
