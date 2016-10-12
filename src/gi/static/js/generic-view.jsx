@@ -25,6 +25,9 @@ var GenericPage = React.createClass({
             canSubmit: false,
             historyTableData: Array(),
             historyTableSelectedRows: Array(),
+            montantTotalDepots: null,
+            montantTotalRetraits: null,
+            montantVirement: null,
         }
     },
 
@@ -36,12 +39,28 @@ var GenericPage = React.createClass({
         fetchAuth(this.props.historyURL, 'get', computeHistoryTableData)
     },
 
+    calculateAmounts() {
+        if (this.props.mode == 'operations/depots-retraits') {
+            var montantTotalDepots = null
+            var montantTotalRetraits = null
+            var montantVirement = null
+
+            this.setState({montantTotalDepots: montantTotalDepots,
+                           montantTotalRetraits: montantTotalRetraits,
+                           montantVirement: montantVirement},
+                          this.validateForm)
+        }
+        else {
+            this.validateForm()
+        }
+    },
+
     onSelectTableRow(row, isSelected, event) {
         var historyTableSelectedRows = this.state.historyTableSelectedRows
 
         if (isSelected) {
             historyTableSelectedRows.push(row)
-            this.setState({historyTableSelectedRows: historyTableSelectedRows}, this.validateForm)
+            this.setState({historyTableSelectedRows: historyTableSelectedRows}, this.calculateAmounts)
         }
         else {
             this.setState({historyTableSelectedRows: _.filter(historyTableSelectedRows,
@@ -49,15 +68,15 @@ var GenericPage = React.createClass({
                                 if (row != item)
                                     return item
                             })
-                          }, this.validateForm)
+                          }, this.calculateAmounts)
         }
     },
 
     onSelectTableAll(isSelected, rows) {
         if (isSelected)
-            this.setState({historyTableSelectedRows: rows}, this.validateForm)
+            this.setState({historyTableSelectedRows: rows}, this.calculateAmounts)
         else
-            this.setState({historyTableSelectedRows: Array()}, this.validateForm)
+            this.setState({historyTableSelectedRows: Array()}, this.calculateAmounts)
     },
 
     enableButton() {
@@ -147,6 +166,69 @@ var GenericPage = React.createClass({
             </BootstrapTable>
         )
 
+        if (this.state.historyTableSelectedRows.length > 0) {
+            if (this.props.mode == 'operations/depots-retraits') {
+                if (this.state.montantTotalDepots) {
+                    var montantDepotsDiv = (
+                        <div className="row">
+                            <div className="col-md-6 margin-top">
+                                <label className="control-label col-md-4">{__("Montant total des dépôts") + " : "}</label>
+                                <span className="col-md-8">{this.state.montantTotalDepots + " EUS"}</span>
+                            </div>
+                        </div>
+                    )
+                }
+                else {
+                    var montantDepotsDiv = null
+                }
+
+                if (this.state.montantTotalRetraits) {
+                    var montantRetraitsDiv = (
+                        <div className="row">
+                            <div className="col-md-6">
+                                <label className="control-label col-md-4">{__("Montant total des retraits") + " : "}</label>
+                                <span className="col-md-8">{this.state.montantTotalRetraits + " EUS"}</span>
+                            </div>
+                        </div>
+                    )
+                }
+                else {
+                    var montantRetraitsDiv = null
+                }
+
+                if (this.state.montantVirement) {
+                    var montantVirementDiv = (
+                        <div className="row">
+                            <div className="col-md-6">
+                                <label className="control-label col-md-4">{__("Virement à réaliser") + " : "}</label>
+                                <span className="col-md-8">
+                                    {this.state.montantVirement +" € du Compte dédié billet vers le Compte dédié numérique"}
+                                </span>
+                            </div>
+                        </div>
+                    )
+                }
+                else {
+                    var montantVirementDiv = null
+                }
+
+                var customInfo = (
+                    <div>
+                        {montantDepotsDiv}
+                        {montantRetraitsDiv}
+                        {montantVirementDiv}
+                    </div>
+                )
+            }
+            else {
+                var customInfo = null
+            }
+        }
+        else {
+            var customInfo = null
+        }
+
+
         return (
             <div className="row-fluid">
                 <div className="row-fluid">
@@ -154,6 +236,7 @@ var GenericPage = React.createClass({
                         {dataTable}
                     </div>
                 </div>
+                {customInfo}
                 <div className="row-fluid">
                     <div className="col-md-12 margin-top">
                         <input
@@ -186,6 +269,16 @@ if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
     var propSaveURL =  getAPIBaseURL + "entree-coffre/"
     var propTranslateTitle = __("Entrée coffre")
     var propCurrency = 'EUS'
+}
+else if (window.location.pathname.toLowerCase().indexOf("operations/depots-retraits") != -1)
+{
+    // URL = operations/depots-retraits
+    var propMode = "operations/depots-retraits"
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-depots-retraits/"
+    var propNextURL =  "/operations"
+    var propSaveURL =  getAPIBaseURL + "validate-depots-retraits/"
+    var propTranslateTitle = __("Dépôts et retraits")
+    var propCurrency = 'EUS / €'
 }
 else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-euro") != -1)
 {

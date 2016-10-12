@@ -72,7 +72,7 @@ urlpatterns = [
     url(r'^operations/entrees-euro/?$', base_views.generic_history_validation, name='operations-entrees-euro'),
     url(r'^operations/entrees-eusko/?$', base_views.generic_history_validation, name='operations-entrees-eusko'),
     # url(r'^operations/reconversions/?$', operations_views.reconversions, name='operations-reconversions'),
-    # url(r'^operations/depots-retraits/?$', operations_views.depots_retraits, name='operations-depots-retraits'),
+    url(r'^operations/depots-retraits/?$', base_views.generic_history_validation, name='operations-depots-retraits'),
 
     # home
     url(r'^$', bdc_views.index, name='home'),
