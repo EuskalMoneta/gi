@@ -55,6 +55,18 @@ var GenericPage = React.createClass({
         }
     },
 
+    /*
+        Il faut calculer le montant total des dépôts (montantTotalDepots),
+            et le montant total des retraits (montantTotalRetraits):
+
+        - Si montantTotalDepots == montantTotalRetraits, pas de virement à faire.
+        - Si montantTotalDepots > montantTotalRetraits,
+            il faut faire un virement de montantTotalDepots - montantTotalRetraits
+            du Compte dédié billet vers le Compte dédié numérique.
+        - Si montantTotalDepots < montantTotalRetraits,
+            il faut faire un virement de montantTotalRetraits - montantTotalDepots
+            du Compte dédié numérique vers le Compte dédié billet.
+    */
     onSelectTableRow(row, isSelected, event) {
         var historyTableSelectedRows = this.state.historyTableSelectedRows
 
@@ -68,15 +80,24 @@ var GenericPage = React.createClass({
                                 if (row != item)
                                     return item
                             })
-                          }, this.calculateAmounts)
+                          }, this.calculateAmounts)montantTotalDepots
         }
     },
 
     onSelectTableAll(isSelected, rows) {
-        if (isSelected)
-            this.setState({historyTableSelectedRows: rows}, this.calculateAmounts)
-        else
-            this.setState({historyTableSelectedRows: Array()}, this.calculateAmounts)
+        if (isSelected) {
+            this.setState({depositCalculatedAmount: _.reduce(rows,
+                                (memo, row) => {
+                                    return memo + Number(row.amount)
+                                }, Number(0)),
+                           historyTableSelectedRows: rows},
+                          this.validateForm)
+        }
+        else {
+            this.setState({depositCalculatedAmount: Number(0),
+                           historyTableSelectedRows: Array()},
+                          this.validateForm)
+        }
     },
 
     enableButton() {
@@ -98,6 +119,8 @@ var GenericPage = React.createClass({
         this.disableButton()
 
         var postData = {}
+        postData.montant_total_depots = this.state.montantTotalDepots
+        postData.montant_total_retraits = this.state.montantTotalRetraits
         postData.selected_payments = this.state.historyTableSelectedRows
 
         var computeForm = (data) => {
