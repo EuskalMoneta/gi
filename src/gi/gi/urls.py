@@ -71,7 +71,7 @@ urlpatterns = [
     url(r'^operations/?$', operations_views.index, name='operations-home'),
     url(r'^operations/entrees-euro/?$', base_views.generic_history_validation, name='operations-entrees-euro'),
     url(r'^operations/entrees-eusko/?$', base_views.generic_history_validation, name='operations-entrees-eusko'),
-    # url(r'^operations/reconversions/?$', operations_views.reconversions, name='operations-reconversions'),
+    url(r'^operations/reconversions/?$', base_views.generic_history_validation, name='operations-reconversions'),
     url(r'^operations/depots-retraits/?$', base_views.generic_history_validation, name='operations-depots-retraits'),
 
     # home

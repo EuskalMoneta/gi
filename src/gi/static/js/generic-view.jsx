@@ -25,9 +25,13 @@ var GenericPage = React.createClass({
             canSubmit: false,
             historyTableData: Array(),
             historyTableSelectedRows: Array(),
+            // Dépôts et Retraits
             montantTotalDepots: null,
             montantTotalRetraits: null,
             montantVirement: null,
+            // Reconversions
+            montantTotalReconversionsBillets: null,
+            montantTotalReconversionsNumeriques: null,
         }
     },
 
@@ -39,6 +43,25 @@ var GenericPage = React.createClass({
         fetchAuth(this.props.historyURL, 'get', computeHistoryTableData)
     },
 
+    /*
+        # Dépôts et Retraits
+
+        Il faut calculer le montant total des dépôts (montantTotalDepots),
+            et le montant total des retraits (montantTotalRetraits):
+
+        - Si montantTotalDepots == montantTotalRetraits, pas de virement à faire.
+        - Si montantTotalDepots > montantTotalRetraits,
+            il faut faire un virement de montantTotalDepots - montantTotalRetraits
+            du Compte dédié billet vers le Compte dédié numérique.
+        - Si montantTotalDepots < montantTotalRetraits,
+            il faut faire un virement de montantTotalRetraits - montantTotalDepots
+            du Compte dédié numérique vers le Compte dédié billet.
+
+        # Reconversions
+
+        - Total des reconversions d'eusko billets
+        - Total des reconversions d'eusko numériques
+    */
     calculateAmounts() {
         if (this.props.mode == 'operations/depots-retraits') {
             var montantTotalDepots = null
@@ -50,23 +73,19 @@ var GenericPage = React.createClass({
                            montantVirement: montantVirement},
                           this.validateForm)
         }
+        else if (this.props.mode == 'operations/reconversions') {
+            var montantTotalReconversionsBillets = null
+            var montantTotalReconversionsNumeriques = null
+
+            this.setState({montantTotalReconversionsBillets: montantTotalReconversionsBillets,
+                           montantTotalReconversionsNumeriques: montantTotalReconversionsNumeriques},
+                          this.validateForm)
+        }
         else {
             this.validateForm()
         }
     },
 
-    /*
-        Il faut calculer le montant total des dépôts (montantTotalDepots),
-            et le montant total des retraits (montantTotalRetraits):
-
-        - Si montantTotalDepots == montantTotalRetraits, pas de virement à faire.
-        - Si montantTotalDepots > montantTotalRetraits,
-            il faut faire un virement de montantTotalDepots - montantTotalRetraits
-            du Compte dédié billet vers le Compte dédié numérique.
-        - Si montantTotalDepots < montantTotalRetraits,
-            il faut faire un virement de montantTotalRetraits - montantTotalDepots
-            du Compte dédié numérique vers le Compte dédié billet.
-    */
     onSelectTableRow(row, isSelected, event) {
         var historyTableSelectedRows = this.state.historyTableSelectedRows
 
@@ -85,19 +104,10 @@ var GenericPage = React.createClass({
     },
 
     onSelectTableAll(isSelected, rows) {
-        if (isSelected) {
-            this.setState({depositCalculatedAmount: _.reduce(rows,
-                                (memo, row) => {
-                                    return memo + Number(row.amount)
-                                }, Number(0)),
-                           historyTableSelectedRows: rows},
-                          this.validateForm)
-        }
-        else {
-            this.setState({depositCalculatedAmount: Number(0),
-                           historyTableSelectedRows: Array()},
-                          this.validateForm)
-        }
+        if (isSelected)
+            this.setState({historyTableSelectedRows: rows}, this.calculateAmounts)
+        else
+            this.setState({historyTableSelectedRows: Array()}, this.calculateAmounts)
     },
 
     enableButton() {
@@ -115,13 +125,22 @@ var GenericPage = React.createClass({
             this.disableButton()
     },
 
+    submitCustomButton(data) {},
+
     submitForm(data) {
         this.disableButton()
 
         var postData = {}
-        postData.montant_total_depots = this.state.montantTotalDepots
-        postData.montant_total_retraits = this.state.montantTotalRetraits
         postData.selected_payments = this.state.historyTableSelectedRows
+
+        if (this.props.mode == 'operations/depots-retraits') {
+            postData.montant_total_depots = this.state.montantTotalDepots
+            postData.montant_total_retraits = this.state.montantTotalRetraits
+        }
+        else if (this.props.mode == 'operations/reconversions') {
+            postData.montant_total_billets = this.state.montantTotalReconversionsBillets
+            postData.montant_total_numerique = this.state.montantTotalReconversionsNumeriques
+        }
 
         var computeForm = (data) => {
             this.refs.container.success(
@@ -189,8 +208,30 @@ var GenericPage = React.createClass({
             </BootstrapTable>
         )
 
-        if (this.state.historyTableSelectedRows.length > 0) {
-            if (this.props.mode == 'operations/depots-retraits') {
+        if (this.props.mode == 'operations/reconversions') {
+            var customButton = (
+                <div className="margin-top col-md-1">
+                    <input
+                        name="submit"
+                        data-eusko="entree-stock-submit"
+                        type="submit"
+                        defaultValue={__("Générer le fichier SEPA")}
+                        className="btn btn-default"
+                        formNoValidate={true}
+                        onClick={this.submitCustomButton}
+                        disabled={!this.state.canSubmit}
+                    />
+                </div>
+            )
+        }
+        else {
+            var customButton = null
+        }
+
+        if (this.state.historyTableSelectedRows.length > 0)
+        {
+            if (this.props.mode == 'operations/depots-retraits')
+            {
                 if (this.state.montantTotalDepots) {
                     var montantDepotsDiv = (
                         <div className="row">
@@ -243,6 +284,49 @@ var GenericPage = React.createClass({
                     </div>
                 )
             }
+            else if (this.props.mode == 'operations/reconversions')
+            {
+                if (this.state.montantTotalReconversionsBillets)
+                {
+                    var montantTotalReconversionsBilletsDiv = (
+                        <div className="row">
+                            <div className="col-md-6 margin-top">
+                                <label className="control-label col-md-6">{__("Total des reconversions d'eusko billets") + " : "}</label>
+                                <span className="col-md-6">
+                                    {this.state.montantTotalReconversionsBillets + " " + this.props.currency}
+                                </span>
+                            </div>
+                        </div>
+                    )
+                }
+                else {
+                    var montantTotalReconversionsBilletsDiv = null
+                }
+
+                if (this.state.montantTotalReconversionsNumeriques)
+                {
+                    var montantTotalReconversionsNumeriquesDiv = (
+                        <div className="row">
+                            <div className="col-md-6">
+                                <label className="control-label col-md-6">{__("Total des reconversions d'eusko numériques") + " : "}</label>
+                                <span className="col-md-6">
+                                    {this.state.montantTotalReconversionsNumeriques + " " + this.props.currency}
+                                </span>
+                            </div>
+                        </div>
+                    )
+                }
+                else {
+                    var montantTotalReconversionsNumeriquesDiv = null
+                }
+
+                var customInfo = (
+                    <div>
+                        {montantTotalReconversionsBilletsDiv}
+                        {montantTotalReconversionsNumeriquesDiv}
+                    </div>
+                )
+            }
             else {
                 var customInfo = null
             }
@@ -260,8 +344,8 @@ var GenericPage = React.createClass({
                     </div>
                 </div>
                 {customInfo}
-                <div className="row-fluid">
-                    <div className="col-md-12 margin-top">
+                <div className="row">
+                    <div className="margin-top col-md-1 col-md-offset-1">
                         <input
                             name="submit"
                             data-eusko="entree-stock-submit"
@@ -273,6 +357,8 @@ var GenericPage = React.createClass({
                             disabled={!this.state.canSubmit}
                         />
                     </div>
+                    {' '}
+                    {customButton}
                 </div>
                 <ToastContainer ref="container"
                                 toastMessageFactory={ToastMessageFactory}
@@ -302,6 +388,16 @@ else if (window.location.pathname.toLowerCase().indexOf("operations/depots-retra
     var propSaveURL =  getAPIBaseURL + "validate-depots-retraits/"
     var propTranslateTitle = __("Dépôts et retraits")
     var propCurrency = 'EUS / €'
+}
+else if (window.location.pathname.toLowerCase().indexOf("operations/reconversions") != -1)
+{
+    // URL = operations/reconversions
+    var propMode = "operations/reconversions"
+    var propGetHistoryURL = getAPIBaseURL + "payments-available-reconversions/"
+    var propNextURL =  "/operations"
+    var propSaveURL =  getAPIBaseURL + "validate-reconversions/"
+    var propTranslateTitle = __("Reconversions")
+    var propCurrency = 'EUS'
 }
 else if (window.location.pathname.toLowerCase().indexOf("operations/entrees-euro") != -1)
 {
