@@ -80,7 +80,7 @@ var GenericPage = React.createClass({
                                 if (row != item)
                                     return item
                             })
-                          }, this.calculateAmounts)montantTotalDepots
+                          }, this.calculateAmounts)
         }
     },
 
