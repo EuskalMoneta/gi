@@ -75,7 +75,7 @@ var DisplayBDC = React.createClass({
     componentDidMount() {
         // Get bdc data
         var computeBdcData = (bdc) => {
-            this.setState({bdcName: bdc.lastname, bdcOperatorID: bdc.id})
+            this.setState({bdcName: bdc.lastname})
         }
         fetchAuth(getAPIBaseURL + "user-data/?username=" + this.state.bdcID, 'get', computeBdcData)
     },
@@ -117,7 +117,7 @@ var DisplayBDC = React.createClass({
             // Error during request, or parsing NOK :(
             this.hideModal()
 
-            console.error(getAPIBaseURL + "close-bdc/" + this.state.bdcID, 'DELETE', err)
+            console.error(getAPIBaseURL + "bdc/" + this.state.bdcID + "/", 'DELETE', err)
             this.refs.container.error(
                 __("Une erreur s'est produite lors de la fermeture du BDC !"),
                 "",
@@ -128,7 +128,7 @@ var DisplayBDC = React.createClass({
                 }
             )
         }
-        fetchAuth(getAPIBaseURL + "close-bdc/" + this.state.bdcID, 'DELETE', deleteBdcPromise, null, promiseError)
+        fetchAuth(getAPIBaseURL + "bdc/" + this.state.bdcID + "/", 'DELETE', deleteBdcPromise, null, promiseError)
     },
 
     openModal() {
@@ -148,7 +148,7 @@ var DisplayBDC = React.createClass({
                         <ModalTitle>{__("Fermer un bureau de change ?")}</ModalTitle>
                     </ModalHeader>
                     <ModalBody>
-                        <p>{__("Voulez-vous fermer le bureau de change") + " " + this.state.bdcID + " ?"}</p>
+                        <p>{__("Voulez-vous fermer le bureau de change") + " " + this.state.bdcID + " - " + this.state.bdcName + " ?"}</p>
                     </ModalBody>
                     <ModalFooter>
                         <button className="btn btn-default" onClick={this.hideModal}>
