@@ -3,6 +3,7 @@ version: '2'
 services:
   gi:
     build: src/gi
+    container_name: gi
     volumes:
       - ./src/gi:/usr/src/app
       - /usr/src/app/node_modules
