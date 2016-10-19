@@ -90,7 +90,7 @@ textarea {
   background-color: white;
 }
 
-/* MemberShow */
+/* BDCShow */
 .bdc-show-panel {
   label {
     text-align: right;
@@ -250,6 +250,32 @@ textarea {
 .react-bs-container-body {
   td {
     cursor: pointer;
+  }
+}
+
+/* BDCSearch */
+// WARNING, these UGLY hacks are used to float left the search field in react-bootstrap-table
+.react-bs-table-tool-bar {
+  .col-xs-12.col-sm-6.col-md-6.col-lg-8 {
+    display: none;
+  }
+}
+.react-bs-table-tool-bar {
+  .col-xs-12.col-sm-6.col-md-6.col-lg-4 {
+    padding-left: 5px;
+  }
+}
+
+.react-bs-table-search-form {
+  input {
+    height: 45px !important;
+    line-height: 1.42857143 !important;
+    padding-top: 10px !important;
+    padding-right: 15px !important;
+    padding-bottom: 10px !important;
+    padding-left: 15px !important;
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+    font-size: 15px !important;
   }
 }
 

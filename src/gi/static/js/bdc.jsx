@@ -56,6 +56,7 @@ var BDCList = React.createClass({
 
         var bdcListTable = (
             <BootstrapTable data={this.state.bdcList} striped={true} hover={true} selectRow={selectRowProp}
+                            search={true} searchPlaceholder={__("Rechercher un bureau de change")}
                             tableContainerClass="react-bs-table-list-bdc" options={{noDataText: __("Rien à afficher.")}}
             >
                 <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
