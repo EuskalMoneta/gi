@@ -1,4 +1,11 @@
-FROM python:3.5-onbuild
+FROM python:3.5
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+COPY ./src/gi/ /usr/src/app/
+RUN pip install --no-cache-dir -r requirements.txt
+
 
 # this apt-get thing is from the now deprecated django docker image
 RUN apt-get update && apt-get install -y \
