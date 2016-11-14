@@ -2,7 +2,7 @@ version: '2'
 
 services:
   gi:
-    build: src/gi
+    build: .
     container_name: gi
     volumes:
       - ./src/gi:/usr/src/app
