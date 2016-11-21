@@ -1,0 +1,96 @@
+image: gitlab/dind
+
+stages:
+  - build
+  - test
+  - release
+  - deploy
+
+variables:
+  CONTAINER_TEST_IMAGE: sources.meta-it.fr:4567/euskal-moneta/gi:$CI_BUILD_REF_NAME
+  CONTAINER_RELEASE_IMAGE: sources.meta-it.fr:4567/euskal-moneta/gi
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e dev@meta-it.fr sources.meta-it.fr:4567
+
+build_job:
+  stage: build
+  script:
+    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+  tags:
+    - dind
+
+test_job_develop:
+  stage: test
+  variables:
+    ODOO_CONTAINER_TAG: dev
+  script:
+    - bash test.sh
+  only:
+    - develop
+  tags:
+    - dind
+
+release_job:
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE:latest
+    - docker push $CONTAINER_RELEASE_IMAGE:latest
+  only:
+    - master
+  tags:
+    - dind
+
+release_job_staging:
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE:release
+    - docker push $CONTAINER_RELEASE_IMAGE:release
+  only:
+    - /^release-.*$/
+  tags:
+    - dind
+
+release_job_develop:
+  stage: release
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE:dev
+    - docker push $CONTAINER_RELEASE_IMAGE:dev
+  only:
+    - develop
+  tags:
+    - dind
+
+deploy_job_develop:
+  stage: deploy
+  script:
+    - docker login -u $CI_SUPERUSER_USERNAME -p $CI_SUPERUSER_PASSWORD -e dev@meta-it.fr sources.meta-it.fr:4567
+    - cd /home/meta-it/sources/eusko-develop
+    - docker-compose pull gestion
+    - docker-compose stop
+    - docker-compose rm -f gestion
+    - docker-compose up -d
+  tags:
+    - meta-it-f3
+  only:
+    - develop
+  environment: dev
+
+deploy_job_staging:
+  stage: deploy
+  script:
+    - docker login -u $CI_SUPERUSER_USERNAME -p $CI_SUPERUSER_PASSWORD -e dev@meta-it.fr sources.meta-it.fr:4567
+    - cd /home/meta-it/sources/euskal-moneta
+    - docker-compose pull gestion
+    - docker-compose stop
+    - docker-compose rm -f gestion
+    - docker-compose up -d
+  tags:
+    - eusko-integration
+  only:
+    - /^release-.*$/
+  environment: staging
