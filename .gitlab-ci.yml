@@ -32,7 +32,7 @@ test_job_develop:
   variables:
     ODOO_CONTAINER_TAG: dev
   script:
-    - bash test.sh
+    - /bin/bash test.sh
   only:
     - develop
   tags:
