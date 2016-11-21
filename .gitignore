@@ -4,6 +4,10 @@ __pycache__/
 .~lock*
 .cache/
 
+data/
+log/
+old/
+
 db.sqlite3
 eusko.sublime-project
 eusko.sublime-workspace
