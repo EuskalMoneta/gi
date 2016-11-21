@@ -1,17 +1,23 @@
-image: gitlab/dind
+image: docker:latest
 
+# When using dind, it's wise to use the overlayfs driver for
+# improved performance.
+variables:
+  DOCKER_DRIVER: overlay
+  CONTAINER_TEST_IMAGE: sources.meta-it.fr:4567/euskal-moneta/gi:$CI_BUILD_REF_NAME
+  CONTAINER_RELEASE_IMAGE: sources.meta-it.fr:4567/euskal-moneta/gi
+
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e dev@meta-it.fr sources.meta-it.fr:4567
 stages:
   - build
   - test
   - release
   - deploy
-
-variables:
-  CONTAINER_TEST_IMAGE: sources.meta-it.fr:4567/euskal-moneta/gi:$CI_BUILD_REF_NAME
-  CONTAINER_RELEASE_IMAGE: sources.meta-it.fr:4567/euskal-moneta/gi
-
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e dev@meta-it.fr sources.meta-it.fr:4567
 
 build_job:
   stage: build
@@ -19,7 +25,7 @@ build_job:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
   tags:
-    - dind
+    - docker
 
 test_job_develop:
   stage: test
@@ -30,7 +36,7 @@ test_job_develop:
   only:
     - develop
   tags:
-    - dind
+    - docker
 
 release_job:
   stage: release
@@ -41,7 +47,7 @@ release_job:
   only:
     - master
   tags:
-    - dind
+    - docker
 
 release_job_staging:
   stage: release
@@ -52,7 +58,7 @@ release_job_staging:
   only:
     - /^release-.*$/
   tags:
-    - dind
+    - docker
 
 release_job_develop:
   stage: release
@@ -63,7 +69,7 @@ release_job_develop:
   only:
     - develop
   tags:
-    - dind
+    - docker
 
 deploy_job_develop:
   stage: deploy
