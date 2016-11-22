@@ -12,7 +12,7 @@ services:
 
 before_script:
   - docker info
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN -e dev@meta-it.fr sources.meta-it.fr:4567
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN sources.meta-it.fr:4567
 stages:
   - build
   - test
@@ -74,7 +74,6 @@ release_job_develop:
 deploy_job_develop:
   stage: deploy
   script:
-    - docker login -u $CI_SUPERUSER_USERNAME -p $CI_SUPERUSER_PASSWORD -e dev@meta-it.fr sources.meta-it.fr:4567
     - cd /home/meta-it/sources/eusko-develop
     - docker-compose pull gestion
     - docker-compose stop
@@ -89,7 +88,6 @@ deploy_job_develop:
 deploy_job_staging:
   stage: deploy
   script:
-    - docker login -u $CI_SUPERUSER_USERNAME -p $CI_SUPERUSER_PASSWORD -e dev@meta-it.fr sources.meta-it.fr:4567
     - cd /home/meta-it/sources/euskal-moneta
     - docker-compose pull gestion
     - docker-compose stop
