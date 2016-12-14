@@ -48,7 +48,7 @@ var ComptesDedies = React.createClass({
                         </div>
                         <div className="panel-body">
                             <div className="row">
-                                <div className="col-md-5 col-sm-4">
+                                <div className="col-md-8 col-sm-4">
                                     <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
                                     <span className="col-md-5">{this.state.balanceBillet + " EUS"}</span>
                                 </div>
@@ -65,8 +65,8 @@ var ComptesDedies = React.createClass({
                             <h3 className="panel-title">{__("Compte dédié numérique")}</h3>
                         </div>
                         <div className="panel-body">
-                            <div className="row">
-                                <div className="col-md-5 col-sm-4">
+                             <div className="row">
+                                <div className="col-md-8 col-sm-4">
                                     <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
                                     <span className="col-md-5">{this.state.balanceNumerique + " EUS"}</span>
                                 </div>
