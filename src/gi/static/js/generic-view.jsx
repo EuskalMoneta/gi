@@ -29,6 +29,7 @@ var GenericPage = React.createClass({
             montantTotalDepots: Number(),
             montantTotalRetraits: Number(),
             montantVirement: Number(),
+            virementVersCompte: null,
             // Reconversions
             montantTotalReconversionsBillets: Number(),
             montantTotalReconversionsNumeriques: Number(),
@@ -64,13 +65,35 @@ var GenericPage = React.createClass({
     */
     computeAmounts() {
         if (this.props.mode == 'operations/depots-retraits') {
-            var montantTotalDepots = Number()
-            var montantTotalRetraits = Number()
+            var montantTotalDepots = _.chain(this.state.historyTableSelectedRows)
+               .filter((item) => { return item.type.internalName.toLowerCase() === "compte_des_billets_en_circulation.depot_de_billets" })
+               .reduce((memo, row) => { return memo + Math.abs(row.amount) }, Number(0))
+               .value()
+
+            var montantTotalRetraits = _.chain(this.state.historyTableSelectedRows)
+               .filter((item) => { return item.type.internalName.toLowerCase() === "compte_des_billets_en_circulation.retrait_de_billets" })
+               .reduce((memo, row) => { return memo + Math.abs(row.amount) }, Number(0))
+               .value()
+
             var montantVirement = Number()
+            var virementVersCompte = null
+
+
+            if (montantTotalDepots === montantTotalRetraits)
+                var montantVirement = Number()
+            else if (montantTotalDepots > montantTotalRetraits) {
+                var montantVirement = Number(montantTotalDepots - montantTotalRetraits)
+                var virementVersCompte = "numerique"
+            }
+            else if (montantTotalDepots < montantTotalRetraits) {
+                var montantVirement = Number(montantTotalRetraits - montantTotalDepots)
+                var virementVersCompte = "billet"
+            }
 
             this.setState({montantTotalDepots: montantTotalDepots,
                            montantTotalRetraits: montantTotalRetraits,
-                           montantVirement: montantVirement},
+                           montantVirement: montantVirement,
+                           virementVersCompte: virementVersCompte},
                           this.validateForm)
         }
         else if (this.props.mode == 'operations/reconversions') {
@@ -253,12 +276,22 @@ var GenericPage = React.createClass({
                 </div>
             )
 
+            if (this.state.virementVersCompte === null) {
+                var messageVirement = <em>{__("Aucun")}</em>
+            }
+            else if (this.state.virementVersCompte === "numerique") {
+                var messageVirement = this.state.montantVirement + __(" € du Compte dédié billet vers le Compte dédié numérique")
+            }
+            else if (this.state.virementVersCompte === "billet") {
+                var messageVirement = this.state.montantVirement + __(" € du Compte dédié numérique vers le Compte dédié billet")
+            }
+
             var montantVirementDiv = (
                 <div className="row">
                     <div className="col-md-6">
                         <label className="control-label col-md-4">{__("Virement à réaliser") + " : "}</label>
                         <span className="col-md-8">
-                            {this.state.montantVirement +" € du Compte dédié billet vers le Compte dédié numérique"}
+                            {messageVirement}
                         </span>
                     </div>
                 </div>
