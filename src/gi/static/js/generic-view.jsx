@@ -26,12 +26,12 @@ var GenericPage = React.createClass({
             historyTableData: Array(),
             historyTableSelectedRows: Array(),
             // Dépôts et Retraits
-            montantTotalDepots: null,
-            montantTotalRetraits: null,
-            montantVirement: null,
+            montantTotalDepots: Number(),
+            montantTotalRetraits: Number(),
+            montantVirement: Number(),
             // Reconversions
-            montantTotalReconversionsBillets: null,
-            montantTotalReconversionsNumeriques: null,
+            montantTotalReconversionsBillets: Number(),
+            montantTotalReconversionsNumeriques: Number(),
         }
     },
 
@@ -62,11 +62,11 @@ var GenericPage = React.createClass({
         - Total des reconversions d'eusko billets
         - Total des reconversions d'eusko numériques
     */
-    calculateAmounts() {
+    computeAmounts() {
         if (this.props.mode == 'operations/depots-retraits') {
-            var montantTotalDepots = null
-            var montantTotalRetraits = null
-            var montantVirement = null
+            var montantTotalDepots = Number()
+            var montantTotalRetraits = Number()
+            var montantVirement = Number()
 
             this.setState({montantTotalDepots: montantTotalDepots,
                            montantTotalRetraits: montantTotalRetraits,
@@ -74,8 +74,15 @@ var GenericPage = React.createClass({
                           this.validateForm)
         }
         else if (this.props.mode == 'operations/reconversions') {
-            var montantTotalReconversionsBillets = null
-            var montantTotalReconversionsNumeriques = null
+            var montantTotalReconversionsBillets = _.chain(this.state.historyTableSelectedRows)
+               .filter((item) => { return item.type.internalName.toLowerCase() === "compte_des_billets_en_circulation.reconversion_billets_versement_des_eusko" })
+               .reduce((memo, row) => { return memo + Math.abs(row.amount) }, Number(0))
+               .value()
+               
+            var montantTotalReconversionsNumeriques = _.chain(this.state.historyTableSelectedRows)
+               .filter((item) => { return item.type.internalName.toLowerCase() === "compte_d_adherent.reconversion_numerique" })
+               .reduce((memo, row) => { return memo + Math.abs(row.amount) }, Number(0))
+               .value()
 
             this.setState({montantTotalReconversionsBillets: montantTotalReconversionsBillets,
                            montantTotalReconversionsNumeriques: montantTotalReconversionsNumeriques},
@@ -91,7 +98,7 @@ var GenericPage = React.createClass({
 
         if (isSelected) {
             historyTableSelectedRows.push(row)
-            this.setState({historyTableSelectedRows: historyTableSelectedRows}, this.calculateAmounts)
+            this.setState({historyTableSelectedRows: historyTableSelectedRows}, this.computeAmounts)
         }
         else {
             this.setState({historyTableSelectedRows: _.filter(historyTableSelectedRows,
@@ -99,15 +106,15 @@ var GenericPage = React.createClass({
                                 if (row != item)
                                     return item
                             })
-                          }, this.calculateAmounts)
+                          }, this.computeAmounts)
         }
     },
 
     onSelectTableAll(isSelected, rows) {
         if (isSelected)
-            this.setState({historyTableSelectedRows: rows}, this.calculateAmounts)
+            this.setState({historyTableSelectedRows: rows}, this.computeAmounts)
         else
-            this.setState({historyTableSelectedRows: Array()}, this.calculateAmounts)
+            this.setState({historyTableSelectedRows: Array()}, this.computeAmounts)
     },
 
     enableButton() {
@@ -228,113 +235,77 @@ var GenericPage = React.createClass({
             var customButton = null
         }
 
-        if (this.state.historyTableSelectedRows.length > 0)
+        if (this.props.mode == 'operations/depots-retraits') {
+            var montantDepotsDiv = (
+                <div className="row">
+                    <div className="col-md-6 margin-top">
+                        <label className="control-label col-md-4">{__("Montant total des dépôts") + " : "}</label>
+                        <span className="col-md-8">{this.state.montantTotalDepots + " EUS"}</span>
+                    </div>
+                </div>
+            )
+            var montantRetraitsDiv = (
+                <div className="row">
+                    <div className="col-md-6">
+                        <label className="control-label col-md-4">{__("Montant total des retraits") + " : "}</label>
+                        <span className="col-md-8">{this.state.montantTotalRetraits + " EUS"}</span>
+                    </div>
+                </div>
+            )
+
+            var montantVirementDiv = (
+                <div className="row">
+                    <div className="col-md-6">
+                        <label className="control-label col-md-4">{__("Virement à réaliser") + " : "}</label>
+                        <span className="col-md-8">
+                            {this.state.montantVirement +" € du Compte dédié billet vers le Compte dédié numérique"}
+                        </span>
+                    </div>
+                </div>
+            )
+
+            var customInfo = (
+                <div>
+                    {montantDepotsDiv}
+                    {montantRetraitsDiv}
+                    {montantVirementDiv}
+                </div>
+            )
+        }
+        else if (this.props.mode == 'operations/reconversions')
         {
-            if (this.props.mode == 'operations/depots-retraits')
-            {
-                if (this.state.montantTotalDepots) {
-                    var montantDepotsDiv = (
-                        <div className="row">
-                            <div className="col-md-6 margin-top">
-                                <label className="control-label col-md-4">{__("Montant total des dépôts") + " : "}</label>
-                                <span className="col-md-8">{this.state.montantTotalDepots + " EUS"}</span>
-                            </div>
-                        </div>
-                    )
-                }
-                else {
-                    var montantDepotsDiv = null
-                }
-
-                if (this.state.montantTotalRetraits) {
-                    var montantRetraitsDiv = (
-                        <div className="row">
-                            <div className="col-md-6">
-                                <label className="control-label col-md-4">{__("Montant total des retraits") + " : "}</label>
-                                <span className="col-md-8">{this.state.montantTotalRetraits + " EUS"}</span>
-                            </div>
-                        </div>
-                    )
-                }
-                else {
-                    var montantRetraitsDiv = null
-                }
-
-                if (this.state.montantVirement) {
-                    var montantVirementDiv = (
-                        <div className="row">
-                            <div className="col-md-6">
-                                <label className="control-label col-md-4">{__("Virement à réaliser") + " : "}</label>
-                                <span className="col-md-8">
-                                    {this.state.montantVirement +" € du Compte dédié billet vers le Compte dédié numérique"}
-                                </span>
-                            </div>
-                        </div>
-                    )
-                }
-                else {
-                    var montantVirementDiv = null
-                }
-
-                var customInfo = (
-                    <div>
-                        {montantDepotsDiv}
-                        {montantRetraitsDiv}
-                        {montantVirementDiv}
+            var montantTotalReconversionsBilletsDiv = (
+                <div className="row">
+                    <div className="col-md-6 margin-top">
+                        <label className="control-label col-md-6">{__("Total des reconversions d'eusko billets") + " : "}</label>
+                        <span className="col-md-6">
+                            {this.state.montantTotalReconversionsBillets + " " + this.props.currency}
+                        </span>
                     </div>
-                )
-            }
-            else if (this.props.mode == 'operations/reconversions')
-            {
-                if (this.state.montantTotalReconversionsBillets)
-                {
-                    var montantTotalReconversionsBilletsDiv = (
-                        <div className="row">
-                            <div className="col-md-6 margin-top">
-                                <label className="control-label col-md-6">{__("Total des reconversions d'eusko billets") + " : "}</label>
-                                <span className="col-md-6">
-                                    {this.state.montantTotalReconversionsBillets + " " + this.props.currency}
-                                </span>
-                            </div>
-                        </div>
-                    )
-                }
-                else {
-                    var montantTotalReconversionsBilletsDiv = null
-                }
+                </div>
+            )
 
-                if (this.state.montantTotalReconversionsNumeriques)
-                {
-                    var montantTotalReconversionsNumeriquesDiv = (
-                        <div className="row">
-                            <div className="col-md-6">
-                                <label className="control-label col-md-6">{__("Total des reconversions d'eusko numériques") + " : "}</label>
-                                <span className="col-md-6">
-                                    {this.state.montantTotalReconversionsNumeriques + " " + this.props.currency}
-                                </span>
-                            </div>
-                        </div>
-                    )
-                }
-                else {
-                    var montantTotalReconversionsNumeriquesDiv = null
-                }
-
-                var customInfo = (
-                    <div>
-                        {montantTotalReconversionsBilletsDiv}
-                        {montantTotalReconversionsNumeriquesDiv}
+            var montantTotalReconversionsNumeriquesDiv = (
+                <div className="row">
+                    <div className="col-md-6">
+                        <label className="control-label col-md-6">{__("Total des reconversions d'eusko numériques") + " : "}</label>
+                        <span className="col-md-6">
+                            {this.state.montantTotalReconversionsNumeriques + " " + this.props.currency}
+                        </span>
                     </div>
-                )
-            }
-            else {
-                var customInfo = null
-            }
+                </div>
+            )
+
+            var customInfo = (
+                <div>
+                    {montantTotalReconversionsBilletsDiv}
+                    {montantTotalReconversionsNumeriquesDiv}
+                </div>
+            )
         }
         else {
             var customInfo = null
         }
-
 
         return (
             <div className="row-fluid">
