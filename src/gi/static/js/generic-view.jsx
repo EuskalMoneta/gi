@@ -217,7 +217,7 @@ var GenericPage = React.createClass({
 
         if (this.props.mode == 'operations/reconversions') {
             var customButton = (
-                <div className="margin-top col-md-1">
+                <div className="margin-top col-md-offset-1 col-md-1">
                     <input
                         name="submit"
                         data-eusko="entree-stock-submit"
@@ -271,6 +271,8 @@ var GenericPage = React.createClass({
                     {montantVirementDiv}
                 </div>
             )
+
+            var messageButton = __("Enregistrer")
         }
         else if (this.props.mode == 'operations/reconversions')
         {
@@ -302,9 +304,12 @@ var GenericPage = React.createClass({
                     {montantTotalReconversionsNumeriquesDiv}
                 </div>
             )
+
+            var messageButton = __("Enregistrer les virements")
         }
         else {
             var customInfo = null
+            var messageButton = __("Enregistrer")
         }
 
         return (
@@ -321,7 +326,7 @@ var GenericPage = React.createClass({
                             name="submit"
                             data-eusko="entree-stock-submit"
                             type="submit"
-                            defaultValue={__("Enregistrer")}
+                            defaultValue={messageButton}
                             className="btn btn-success"
                             formNoValidate={true}
                             onClick={this.submitForm}
