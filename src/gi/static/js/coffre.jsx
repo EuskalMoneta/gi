@@ -10,21 +10,43 @@ class CoffrePage extends React.Component {
 
         // Default state
         this.state = {
+            coffreData: undefined,
+            transitData: undefined,
         }
+        var computeCoffrePageData = (data) => {
+            this.setState({
+                coffreData: _.filter(data, (item) => { return item.type.id == "stock_de_billets" })[0],
+                transitData: _.filter(data, (item) => { return item.type.id == "compte_de_transit" })[0]
+            })
+        }
+        fetchAuth(getAPIBaseURL + "accounts-system-summaries/", 'get', computeCoffrePageData)
 
     }
-
     render() {
         return (
             <div className="col-md-10">
-                <Coffre />
-                <CompteDeTransit />
+                <Coffre data={this.state.coffreData}/>
+                <CompteDeTransit data={this.state.transitData}/>
             </div>
         )
     }
 }
 
 var Coffre = React.createClass({
+    getInitialState() {
+        return {
+            balance: '',
+            currency: '',
+        }
+    },
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.data) {
+            this.setState({balance: nextProps.data.balance,
+                           currency: nextProps.data.currency})
+        }
+    },
+
     render() {
         return (
             <div className="panel panel-info">
@@ -35,6 +57,7 @@ var Coffre = React.createClass({
                     <div className="row">
                         <div className="col-md-8 col-sm-4">
                             <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
+                            <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
                             <a href="/coffre/history" className="btn btn-default">{__("Historique")}</a>
@@ -55,6 +78,19 @@ var Coffre = React.createClass({
 })
 
 var CompteDeTransit = React.createClass({
+    getInitialState() {
+        return {
+            balance: '',
+            currency: '',
+        }
+    },
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.data) {
+            this.setState({balance: nextProps.data.balance,
+                           currency: nextProps.data.currency})
+        }
+    },
     render() {
         return (
             <div className="panel panel-info">
@@ -65,6 +101,7 @@ var CompteDeTransit = React.createClass({
                     <div className="row">
                         <div className="col-md-8 col-sm-4">
                             <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
+                            <span className="col-md-5">{this.state.balance + " " + this.state.currency}</span>
                         </div>
                         <div className="col-md-4">
                             <a href="/comptedetransit/history" className="btn btn-default">{__("Historique")}</a>
