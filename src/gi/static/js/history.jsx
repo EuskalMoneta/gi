@@ -62,8 +62,9 @@ var ManagerHistoryPage = React.createClass({
                                   "&account_type=" + this.props.mode, 'get', computeHistoryList)
                     }
                     else {
-                        fetchAuth(getAPIBaseURL + "accounts-history/&account_type=" + this.props.mode,
-                                  'get', computeHistoryList)
+                        fetchAuth(getAPIBaseURL +
+                                  "accounts-history/?cyclos_mode=gi" +
+                                  "&account_type=" + this.props.mode, 'get', computeHistoryList)
                     }
                 });
         }
@@ -152,7 +153,7 @@ var ManagerHistoryPage = React.createClass({
                 </div>
             )
         }
-        else if (this.props.mode == 'coffre') {
+        else if (this.props.mode == 'stock_de_billets') {
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-2 col-md-2 col-sm-4">
@@ -170,7 +171,7 @@ var ManagerHistoryPage = React.createClass({
                 </div>
             )
         }
-        else if (this.props.mode == 'comptedetransit') {
+        else if (this.props.mode == 'compte_de_transit') {
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
@@ -256,13 +257,13 @@ else if (window.location.pathname.toLowerCase().indexOf("retour-eusko") != -1)
 else if (window.location.pathname.toLowerCase().indexOf("coffre/history") != -1)
 {
     var pageTitle = __("Historique coffre")
-    var mode = 'coffre'
+    var mode = 'stock_de_billets'
     var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else if (window.location.pathname.toLowerCase().indexOf("comptedetransit/history") != -1)
 {
     var pageTitle = __("Historique compte de transit")
-    var mode = 'comptedetransit'
+    var mode = 'compte_de_transit'
     var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else
