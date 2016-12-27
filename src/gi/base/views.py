@@ -60,3 +60,8 @@ def change_password(request):
 @login_required
 def generic_history_validation(request, **kwargs):
     return render(request, 'generic-history-validation.html')
+
+
+@login_required
+def history(request, account_name):
+    return render(request, 'generic-history.html', {'account_name': account_name})

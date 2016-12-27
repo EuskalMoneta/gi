@@ -18,7 +18,6 @@ var ManagerHistoryPage = React.createClass({
     getInitialState() {
         return {
             accountName: document.getElementById("account_name").value,
-            bdcID: document.getElementById("bdc_id").value,
             historyList: undefined,
             currentSolde: undefined
         }
@@ -57,12 +56,21 @@ var ManagerHistoryPage = React.createClass({
                     };
 
                     // Get account history
-                    fetchAuth(getAPIBaseURL +
-                              "accounts-history/?login_bdc=" + this.state.bdcID +
-                              "&account_type=" + this.props.mode, 'get', computeHistoryList)
+                    if (this.props.loginBDC) {
+                        fetchAuth(getAPIBaseURL +
+                                  "accounts-history/?login_bdc=" + this.props.loginBDC +
+                                  "&account_type=" + this.props.mode, 'get', computeHistoryList)
+                    }
+                    else {
+                        fetchAuth(getAPIBaseURL + "accounts-history/&account_type=" + this.props.mode,
+                                  'get', computeHistoryList)
+                    }
                 });
         }
-        fetchAuth(getAPIBaseURL + "accounts-summaries/" + this.state.bdcID, 'get', computeHistoryData)
+        if (this.props.loginBDC)
+            fetchAuth(getAPIBaseURL + "accounts-summaries/" + this.props.loginBDC, 'get', computeHistoryData)
+        else
+            fetchAuth(getAPIBaseURL + "system-accounts-summaries/", 'get', computeHistoryData)
     },
 
     render() {
@@ -144,6 +152,36 @@ var ManagerHistoryPage = React.createClass({
                 </div>
             )
         }
+        else if (this.props.mode == 'coffre') {
+            var actionButtons = (
+                <div className="row margin-bottom">
+                    <div className="col-md-offset-2 col-md-2 col-sm-4">
+                        <a href="/coffre/entree" className="btn btn-info">{__("Entrée")}</a>
+                    </div>
+                    <div className="col-md-offset-1 col-md-2 col-sm-4">
+                        <a href="/coffre/sortie" className="btn btn-default">{__("Sortie")}</a>
+                    </div>
+                    <div className="col-md-offset-1 col-md-2 col-sm-4">
+                        <label className="control-label col-md-12 solde-history-label">
+                            {__("Solde") + ": "}
+                            {currentSoldeLabel}
+                        </label>
+                    </div>
+                </div>
+            )
+        }
+        else if (this.props.mode == 'comptedetransit') {
+            var actionButtons = (
+                <div className="row margin-bottom">
+                    <div className="col-md-offset-1 col-md-2 col-sm-4">
+                        <label className="control-label col-md-12 solde-history-label">
+                            {__("Solde") + ": "}
+                            {currentSoldeLabel}
+                        </label>
+                    </div>
+                </div>
+            )
+        }
 
         // History data table
         if (this.state.historyList) {
@@ -215,12 +253,26 @@ else if (window.location.pathname.toLowerCase().indexOf("retour-eusko") != -1)
     var mode = 'retours_d_eusko_bdc'
     var url = getAPIBaseURL + "change-euro-eusko/"
 }
+else if (window.location.pathname.toLowerCase().indexOf("coffre/history") != -1)
+{
+    var pageTitle = __("Historique coffre")
+    var mode = 'coffre'
+    var url = getAPIBaseURL + "change-euro-eusko/"
+}
+else if (window.location.pathname.toLowerCase().indexOf("comptedetransit/history") != -1)
+{
+    var pageTitle = __("Historique compte de transit")
+    var mode = 'comptedetransit'
+    var url = getAPIBaseURL + "change-euro-eusko/"
+}
 else
-    window.location.assign("/manager");
+    window.location.assign("/bdc");
 
-
-var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
-                                               window.location.pathname.lastIndexOf('/history'))
+var loginBDC = undefined
+if (window.location.pathname.toLowerCase().indexOf('bdc/manage/') != -1) {
+    var loginBDC = window.location.pathname.slice(window.location.pathname.lastIndexOf('bdc/manage/') + 11,
+                                                   window.location.pathname.lastIndexOf('/history'))
+}
 
 ReactDOM.render(
     <ManagerHistoryPage

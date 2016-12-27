@@ -67,6 +67,9 @@ urlpatterns = [
     url(r'^banques/virement/(?P<bank_name>[\w\-]+)?/?$',
         base_views.generic_history_validation, name='banques-virement'),
 
+    # historiques
+    url(r'^(?P<account_name>[\w\-]+)/history/?$', base_views.history, name='generic-history'),
+
     # operations
     url(r'^operations/?$', operations_views.index, name='operations-home'),
     url(r'^operations/entrees-euro/?$', base_views.generic_history_validation, name='operations-entrees-euro'),

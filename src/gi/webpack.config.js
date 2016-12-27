@@ -31,7 +31,7 @@ module.exports = Object.keys(languages).map(function(language) {
             SortieCoffre: './static/js/sortie-coffre',
             EntreeStock: './static/js/entree-stock',
             SortieStock: './static/js/sortie-stock',
-            BDCHistory: './static/js/bdc-history',
+            History: './static/js/history',
             BankDeposit: './static/js/bank-deposit',
             CashDeposit: './static/js/cash-deposit',
         },

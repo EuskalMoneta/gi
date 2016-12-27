@@ -5,7 +5,6 @@
 {% block container %}
     <div class="container-fluid container-eusko">
         <input type="hidden" id="account_name" value="{{ account_name }}">
-        <input type="hidden" id="bdc_id" value="{{ bdc_id }}">
         <div class="row">
             <div id="manager-history"></div>
         </div>
@@ -13,7 +12,7 @@
 {% endblock %}
 
 {% block extra_js %}
-  {% with 'bundles/js/'|add:CURRENT_LANG|add:'.History.js' as bdchistory_js_static %}
-    <script src="{% static bdchistory_js_static %}"></script>
+  {% with 'bundles/js/'|add:CURRENT_LANG|add:'.History.js' as history_js_static %}
+    <script src="{% static history_js_static %}"></script>
   {% endwith %}
 {% endblock %}
