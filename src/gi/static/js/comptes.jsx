@@ -1,4 +1,4 @@
-    import {
+import {
     fetchAuth,
     getAPIBaseURL,
     NavbarTitle,
@@ -23,9 +23,15 @@ class ComptesPage extends React.Component {
         this.state = {
             tabBanquesDepotsActive: true,
             tabComptesDediesActive: false,
+            dedieData: undefined,
         }
+        var computeComptesPageData = (data) => {
+            this.setState({
+                dedieData: _.filter(data, (item) => { return item.type_b.id == "compte_dedie" })[0],
+            })
+        }
+        fetchAuth(getAPIBaseURL + "accounts-dedicated-summaries/", 'get', computeComptesPageData)
     }
-
     toggleTabs(tab) {
         if (tab == 'banques')
             this.setState({tabBanquesDepotsActive: true, tabComptesDediesActive: false})
@@ -55,7 +61,7 @@ class ComptesPage extends React.Component {
                 </div>
                 <div className="row">
                     <ComptesBanquesDepot initActive={this.state.tabBanquesDepotsActive} />
-                    <ComptesDedies initActive={this.state.tabComptesDediesActive} />
+                    <ComptesDedies initActive={this.state.tabComptesDediesActive} data={this.state.dedieData} />
                 </div>
             </div>
         )

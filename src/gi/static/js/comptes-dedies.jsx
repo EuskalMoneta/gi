@@ -9,17 +9,22 @@ var ComptesDedies = React.createClass({
     getInitialState() {
         return {
             active: this.props.initActive,
-            balanceBillet: '0 - TODO',
-            balanceNumerique: '0 - TODO',
+            balanceBillet: '',
+            currencyBillet: '',
+            balanceNumerique: '',
+            currencyNumerique: '',
         }
     },
 
     componentWillReceiveProps(nextProps) {
         if (nextProps) {
-            this.setState({active: nextProps.initActive})
+            this.setState({active: nextProps.initActive,
+                           balanceBillet: nextProps.data.balance_b,
+                           currencyBillet: nextProps.data.currency_b,
+                           balanceNumerique: nextProps.data.balance_n,
+                           currencyNumerique: nextProps.data.currency_n})
         }
     },
-
     componentDidMount() {
         // TODO:
         // var computeBilletData = (data) => {
@@ -48,9 +53,9 @@ var ComptesDedies = React.createClass({
                         </div>
                         <div className="panel-body">
                             <div className="row">
-                                <div className="col-md-5 col-sm-4">
+                                <div className="col-md-8 col-sm-4">
                                     <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
-                                    <span className="col-md-5">{this.state.balanceBillet + " EUS"}</span>
+                                    <span className="col-md-5">{this.state.balanceBillet + " " + this.state.currencyBillet}</span>
                                 </div>
                                 <div className="col-md-4">
                                     <a href="/comptes/history/billets" className="btn btn-default">{__("Historique")}</a>
@@ -65,10 +70,10 @@ var ComptesDedies = React.createClass({
                             <h3 className="panel-title">{__("Compte dédié numérique")}</h3>
                         </div>
                         <div className="panel-body">
-                            <div className="row">
-                                <div className="col-md-5 col-sm-4">
+                             <div className="row">
+                                <div className="col-md-8 col-sm-4">
                                     <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
-                                    <span className="col-md-5">{this.state.balanceNumerique + " EUS"}</span>
+                                    <span className="col-md-5">{this.state.balanceNumerique + " " + this.state.currencyNumerique}</span>
                                 </div>
                                 <div className="col-md-4">
                                     <a href="/comptes/history/numerique" className="btn btn-default">{__("Historique")}</a>

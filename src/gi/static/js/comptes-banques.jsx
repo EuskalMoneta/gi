@@ -43,13 +43,18 @@ var ComptesBanquesDepot = React.createClass({
                             </div>
                             <div className="panel-body">
                                 <div className="row">
-                                    <div className="col-md-offset-1 col-md-2">
+                                    <div className="col-md-8 col-sm-4">
+                                        <label className="control-label col-md-3">{__("Solde")} :</label>&nbsp;
+                                    </div>
+                                    <div className="col-md-4">
                                         <a href={"/banques/history/" + item.shortLabel} className="btn btn-default">{__("Historique")}</a>
                                     </div>
-                                    <div className="col-md-offset-1 col-md-2 col-sm-4">
+                                </div>
+                                <div className="row margin-top">
+                                    <div className="col-md-offset-2 col-md-2 col-sm-4">
                                         <a href={"/banques/rapprochement/" + item.shortLabel} className="btn btn-info">{__("Rapprocher")}</a>
                                     </div>
-                                    <div className="col-md-offset-1 col-md-2 col-sm-4">
+                                    <div className="col-md-offset-2 col-md-2 col-sm-4">
                                         <a href={"/banques/virement/" + item.shortLabel} className="btn btn-default">{__("Faire un virement")}</a>
                                     </div>
                                 </div>
