@@ -75,7 +75,10 @@ release_job_develop:
 deploy_job_develop:
   stage: deploy
   script:
+    # Update build repository
     - cd /home/meta-it/sources/eusko-develop
+    - git pull
+    # Restart stack
     - docker-compose pull gestion
     - docker-compose stop
     - docker-compose rm -f gestion
