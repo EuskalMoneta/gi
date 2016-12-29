@@ -13,6 +13,7 @@ services:
 before_script:
   - docker info
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN sources.meta-it.fr:4567
+
 stages:
   - build
   - test
@@ -79,22 +80,25 @@ deploy_job_develop:
     - docker-compose stop
     - docker-compose rm -f gestion
     - docker-compose up -d
-  tags:
-    - meta-it-f3
   only:
     - develop
+  tags:
+    - meta-it-f3
   environment: dev
 
 deploy_job_staging:
   stage: deploy
   script:
+    # Update build repository
     - cd /home/meta-it/sources/euskal-moneta
+    - git pull
+    # Restart stack
     - docker-compose pull gestion
     - docker-compose stop
     - docker-compose rm -f gestion
     - docker-compose up -d
-  tags:
-    - eusko-integration
   only:
     - /^release-.*$/
+  tags:
+    - eusko-integration
   environment: staging
