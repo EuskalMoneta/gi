@@ -18,6 +18,7 @@ var ManagerHistoryPage = React.createClass({
     getInitialState() {
         return {
             accountName: document.getElementById("account_name").value,
+            accountType: document.getElementById("account_type").value,
             historyList: undefined,
             currentSolde: undefined
         }
@@ -234,37 +235,41 @@ if (window.location.pathname.toLowerCase().indexOf("stock-billets") != -1)
 {
     var pageTitle = __("Historique stock billets")
     var mode = 'stock_de_billets_bdc'
-    var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else if (window.location.pathname.toLowerCase().indexOf("caisse-euro") != -1)
 {
     var pageTitle = __("Historique caisse Euro")
     var mode = 'caisse_euro_bdc'
-    var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else if (window.location.pathname.toLowerCase().indexOf("caisse-eusko") != -1)
 {
     var pageTitle = __("Historique caisse Eusko")
     var mode = 'caisse_eusko_bdc'
-    var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else if (window.location.pathname.toLowerCase().indexOf("retour-eusko") != -1)
 {
     var pageTitle = __("Historique retour Eusko")
     var mode = 'retours_d_eusko_bdc'
-    var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else if (window.location.pathname.toLowerCase().indexOf("coffre/history") != -1)
 {
     var pageTitle = __("Historique coffre")
     var mode = 'stock_de_billets'
-    var url = getAPIBaseURL + "change-euro-eusko/"
 }
 else if (window.location.pathname.toLowerCase().indexOf("comptedetransit/history") != -1)
 {
     var pageTitle = __("Historique compte de transit")
     var mode = 'compte_de_transit'
-    var url = getAPIBaseURL + "change-euro-eusko/"
+}
+else if (window.location.pathname.toLowerCase().indexOf("comptes/history") != -1)
+{
+    var pageTitle = __("Historique comptes dédié")
+    var mode = 'compte_dedie'
+}
+else if (window.location.pathname.toLowerCase().indexOf("banques/history") != -1)
+{
+    var pageTitle = __("Historique banque de dépôt")
+    var mode = 'banque_de_depot'
 }
 else
     window.location.assign("/bdc");
@@ -277,7 +282,6 @@ if (window.location.pathname.toLowerCase().indexOf('bdc/manage/') != -1) {
 
 ReactDOM.render(
     <ManagerHistoryPage
-        url={url}
         mode={mode}
         loginBDC={loginBDC}
     />,
