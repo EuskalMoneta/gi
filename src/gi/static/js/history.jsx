@@ -63,16 +63,29 @@ var ManagerHistoryPage = React.createClass({
                                   "&account_type=" + this.props.mode, 'get', computeHistoryList)
                     }
                     else {
-                        fetchAuth(getAPIBaseURL +
-                                  "accounts-history/?cyclos_mode=gi" +
-                                  "&account_type=" + this.props.mode, 'get', computeHistoryList)
+                        if (this.props.mode == 'banque_de_depot') {
+                            fetchAuth(getAPIBaseURL +"banks-history/?mode=historique&bank_name=" + this.props.bankName,
+                                      'get', computeHistoryList)
+                        } 
+                        else {
+                            fetchAuth(getAPIBaseURL +
+                                      "accounts-history/?cyclos_mode=gi" +
+                                      "&account_type=" + this.props.mode, 'get', computeHistoryList)
+                        }
                     }
                 });
         }
-        if (this.props.loginBDC)
+        if (this.props.loginBDC) {
             fetchAuth(getAPIBaseURL + "accounts-summaries/" + this.props.loginBDC, 'get', computeHistoryData)
-        else
-            fetchAuth(getAPIBaseURL + "system-accounts-summaries/", 'get', computeHistoryData)
+        }
+        else {
+            if (this.props.mode == 'banque_de_depot') {
+                fetchAuth(getAPIBaseURL + "deposit-banks-summaries/", 'get', computeHistoryData)
+            }
+            else {
+                fetchAuth(getAPIBaseURL + "system-accounts-summaries/", 'get', computeHistoryData)
+            }
+        }
     },
 
     render() {
@@ -231,6 +244,7 @@ var ManagerHistoryPage = React.createClass({
     }
 })
 
+var bankName = undefined
 if (window.location.pathname.toLowerCase().indexOf("stock-billets") != -1)
 {
     var pageTitle = __("Historique stock billets")
@@ -270,6 +284,7 @@ else if (window.location.pathname.toLowerCase().indexOf("banques/history") != -1
 {
     var pageTitle = __("Historique banque de dépôt")
     var mode = 'banque_de_depot'
+    var bankName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.length)
 }
 else
     window.location.assign("/bdc");
@@ -283,6 +298,7 @@ if (window.location.pathname.toLowerCase().indexOf('bdc/manage/') != -1) {
 ReactDOM.render(
     <ManagerHistoryPage
         mode={mode}
+        bankName={bankName}
         loginBDC={loginBDC}
     />,
     document.getElementById('manager-history')
