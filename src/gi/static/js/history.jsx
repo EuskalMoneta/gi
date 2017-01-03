@@ -64,13 +64,13 @@ var ManagerHistoryPage = React.createClass({
                     }
                     else {
                         if (this.props.mode == 'banque_de_depot') {
-                            fetchAuth(getAPIBaseURL +"banks-history/?mode=historique&bank_name=" + this.props.bankName,
+                            fetchAuth(getAPIBaseURL +"banks-history/?mode=historique&bank_name=" + this.props.accountName,
                                       'get', computeHistoryList)
                         } 
                         else {
-                            fetchAuth(getAPIBaseURL +
-                                      "accounts-history/?cyclos_mode=gi" +
-                                      "&account_type=" + this.props.mode, 'get', computeHistoryList)
+                            fetchAuth(getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" +
+                                      this.props.mode + '_eusko_' + this.props.accountName,
+                                      'get', computeHistoryList)
                         }
                     }
                 });
@@ -244,7 +244,7 @@ var ManagerHistoryPage = React.createClass({
     }
 })
 
-var bankName = undefined
+var accountName = undefined
 if (window.location.pathname.toLowerCase().indexOf("stock-billets") != -1)
 {
     var pageTitle = __("Historique stock billets")
@@ -279,12 +279,13 @@ else if (window.location.pathname.toLowerCase().indexOf("comptes/history") != -1
 {
     var pageTitle = __("Historique comptes dédié")
     var mode = 'compte_dedie'
+    var accountName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.length)
 }
 else if (window.location.pathname.toLowerCase().indexOf("banques/history") != -1)
 {
     var pageTitle = __("Historique banque de dépôt")
     var mode = 'banque_de_depot'
-    var bankName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.length)
+    var accountName = window.location.pathname.slice(window.location.pathname.lastIndexOf('/') + 1, window.location.pathname.length)
 }
 else
     window.location.assign("/bdc");
@@ -298,7 +299,7 @@ if (window.location.pathname.toLowerCase().indexOf('bdc/manage/') != -1) {
 ReactDOM.render(
     <ManagerHistoryPage
         mode={mode}
-        bankName={bankName}
+        accountName={accountName}
         loginBDC={loginBDC}
     />,
     document.getElementById('manager-history')

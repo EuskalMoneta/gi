@@ -46,7 +46,7 @@ var ComptesDedies = React.createClass({
                                     <span className="col-md-5">{this.state.balanceBillet + " " + this.state.currencyBillet}</span>
                                 </div>
                                 <div className="col-md-4">
-                                    <a href="/comptes/history/billets" className="btn btn-default">{__("Historique")}</a>
+                                    <a href="/comptes/history/billet" className="btn btn-default">{__("Historique")}</a>
                                 </div>
                             </div>
                         </div>
