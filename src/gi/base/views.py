@@ -63,5 +63,5 @@ def generic_history_validation(request, **kwargs):
 
 
 @login_required
-def history(request, account_name):
-    return render(request, 'generic-history.html', {'account_name': account_name})
+def history(request, account_type, account_name=None):
+    return render(request, 'generic-history.html', {'account_name': account_name, 'account_type': account_type})

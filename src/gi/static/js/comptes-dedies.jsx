@@ -19,23 +19,11 @@ var ComptesDedies = React.createClass({
     componentWillReceiveProps(nextProps) {
         if (nextProps) {
             this.setState({active: nextProps.initActive,
-                           balanceBillet: nextProps.data.balance_b,
-                           currencyBillet: nextProps.data.currency_b,
-                           balanceNumerique: nextProps.data.balance_n,
-                           currencyNumerique: nextProps.data.currency_n})
+                           balanceBillet: nextProps.data.compte_dedie_eusko_billet.balance,
+                           currencyBillet: nextProps.data.compte_dedie_eusko_billet.currency,
+                           balanceNumerique: nextProps.data.compte_dedie_eusko_numerique.balance,
+                           currencyNumerique: nextProps.data.compte_dedie_eusko_numerique.currency})
         }
-    },
-    componentDidMount() {
-        // TODO:
-        // var computeBilletData = (data) => {
-        //     this.setState({balanceBillet: data})
-        // }
-        // fetchAuth({getAPIBaseURL + "account-billet-status/"}, 'get', computeBilletData)
-
-        // var computeNumeriqueData = (data) => {
-        //     this.setState({balanceNumerique: data})
-        // }
-        // fetchAuth({getAPIBaseURL + "account-numerique-status/"}, 'get', computeNumeriqueData)
     },
 
     render() {
@@ -58,7 +46,7 @@ var ComptesDedies = React.createClass({
                                     <span className="col-md-5">{this.state.balanceBillet + " " + this.state.currencyBillet}</span>
                                 </div>
                                 <div className="col-md-4">
-                                    <a href="/comptes/history/billets" className="btn btn-default">{__("Historique")}</a>
+                                    <a href="/comptes/history/billet" className="btn btn-default">{__("Historique")}</a>
                                 </div>
                             </div>
                         </div>

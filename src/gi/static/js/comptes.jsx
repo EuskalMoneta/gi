@@ -26,12 +26,11 @@ class ComptesPage extends React.Component {
             dedieData: undefined,
         }
         var computeComptesPageData = (data) => {
-            this.setState({
-                dedieData: _.filter(data, (item) => { return item.type_b.id == "compte_dedie" })[0],
-            })
+            this.setState({dedieData: data})
         }
-        fetchAuth(getAPIBaseURL + "accounts-dedicated-summaries/", 'get', computeComptesPageData)
+        fetchAuth(getAPIBaseURL + "dedicated-accounts-summaries/", 'get', computeComptesPageData)
     }
+
     toggleTabs(tab) {
         if (tab == 'banques')
             this.setState({tabBanquesDepotsActive: true, tabComptesDediesActive: false})
