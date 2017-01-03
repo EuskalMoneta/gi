@@ -173,17 +173,42 @@ var GenericPage = React.createClass({
         }
 
         var computeForm = (data) => {
-            this.refs.container.success(
-                __("L'enregistrement s'est déroulé correctement."),
-                "",
-                {
-                    timeOut: 5000,
-                    extendedTimeOut: 10000,
-                    closeButton:true
+            if (data.error) {
+                if (data.error == 'error-system-not-enough-money-billet') {
+                    this.refs.container.error(
+                        __("Le compte dédié eusko billet n'a pas un solde suffisant pour réaliser cette opération."),
+                        "",
+                        {
+                            timeOut: 15000,
+                            extendedTimeOut: 15000,
+                            closeButton:true
+                        }
+                    )
                 }
-            )
-
-            setTimeout(() => window.location.assign(this.props.nextURL), 3000)
+                else if (data.error == 'error-system-not-enough-money-numerique') {
+                    this.refs.container.error(
+                        __("Le compte dédié eusko numérique n'a pas un solde suffisant pour réaliser cette opération."),
+                        "",
+                        {
+                            timeOut: 15000,
+                            extendedTimeOut: 15000,
+                            closeButton:true
+                        }
+                    )
+                }
+            }
+            else {
+                this.refs.container.success(
+                    __("L'enregistrement s'est déroulé correctement."),
+                    "",
+                    {
+                        timeOut: 5000,
+                        extendedTimeOut: 10000,
+                        closeButton:true
+                    }
+                )
+                setTimeout(() => window.location.assign(this.props.nextURL), 3000)
+            }
         }
 
         var promiseError = (err) => {
