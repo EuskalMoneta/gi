@@ -171,6 +171,9 @@ var GenericPage = React.createClass({
             postData.montant_total_billets = this.state.montantTotalReconversionsBillets
             postData.montant_total_numerique = this.state.montantTotalReconversionsNumeriques
         }
+        else if (this.props.mode == 'operations/virement') {
+            postData.bank_name = this.props.bankName
+        }
 
         var computeForm = (data) => {
             if (data.error) {
@@ -403,6 +406,7 @@ var GenericPage = React.createClass({
     }
 })
 
+var bankName = undefined
 if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
 {
     // URL = coffre/entree
@@ -486,6 +490,7 @@ ReactDOM.render(
             nextURL={propNextURL}
             mode={propMode}
             currency={propCurrency}
+            bankName={bankName}
     />,
     document.getElementById('generic-view')
 )
