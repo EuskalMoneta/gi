@@ -16,9 +16,29 @@ import 'node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.css'
 var ManagerHistoryPage = React.createClass({
 
     getInitialState() {
+        try {
+            var accountName = undefined
+            if (document.getElementById("account_name").value) {
+                var accountName = document.getElementById("account_name").value
+            }
+        }
+        catch (e) {
+            var accountName = undefined
+        }
+
+        try {
+            var accountType = undefined
+            if (document.getElementById("account_type").value) {
+                var accountType = document.getElementById("account_type").value
+            }
+        }
+        catch (e) {
+            var accountType = undefined
+        }
+
         return {
-            accountName: document.getElementById("account_name").value,
-            accountType: document.getElementById("account_type").value,
+            accountName: accountName,
+            accountType: accountType,
             historyList: undefined,
             currentSolde: undefined
         }
@@ -66,10 +86,14 @@ var ManagerHistoryPage = React.createClass({
                         if (this.props.mode == 'banque_de_depot') {
                             fetchAuth(getAPIBaseURL +"banks-history/?mode=historique&bank_name=" + this.props.accountName,
                                       'get', computeHistoryList)
-                        } 
-                        else {
+                        }
+                        else if (this.props.mode == 'compte_dedie') {
                             fetchAuth(getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" +
                                       this.props.mode + '_eusko_' + this.props.accountName,
+                                      'get', computeHistoryList)
+                        }
+                        else {
+                            fetchAuth(getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" + this.props.mode,
                                       'get', computeHistoryList)
                         }
                     }
