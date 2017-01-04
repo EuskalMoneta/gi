@@ -39,82 +39,88 @@ var ManagerHistoryPage = React.createClass({
         return {
             accountName: accountName,
             accountType: accountType,
-            historyList: undefined,
+            historyList: Array(),
             currentSolde: undefined
         }
     },
 
+    computeHistoryList(historyList) {
+        var res = _.map(historyList.result.pageItems,
+            (item, index, list) => {
+                var newItem = item
+
+                // Input data are strings,
+                // we need to cast it in a Number object to use the toFixed method.
+                if (index === 0)
+                    newItem.solde = Number(this.state.currentSolde.balance)
+                else
+                    newItem.solde = Number(list[index-1].solde) - Number(list[index-1].amount)
+
+                newItem.solde = newItem.solde.toFixed(2)
+                return newItem
+            }
+        )
+
+        this.setState({historyList: res});
+    },
+
     componentDidMount() {
-        // Get Accounts summaries
         var computeHistoryData = (data) => {
-            this.setState(
-                { currentSolde: _.filter(data, (item) => { return item.type.id == this.props.mode })[0] },
+            if (this.props.mode == 'banque_de_depot') {
+                var currentSolde = data[this.props.accountName]
+            }
+            else if (this.props.mode == 'compte_dedie') {
+                var currentSolde = data[this.props.mode + '_eusko_' + this.props.accountName]
+            }
+            else {
+                var currentSolde = _.filter(data, (item) => { return item.type.id == this.props.mode })[0]
+            }
 
-                // WARNING: This looks ugly at first, but this is essential !
-                // this function below is a callback function for setState() because it is asynchronous...
-                // setState() does not immediately mutate this.state but creates a pending state transition
-                // See Notes: https://facebook.github.io/react/docs/component-api.html#setstate
-                // We need to do this because we need the this.state.currentSolde to be set.
+            this.setState({currentSolde: currentSolde},
                 () => {
-                    var computeHistoryList = (historyList) => {
-                        var res = _.map(historyList.result.pageItems,
-                            (item, index, list) => {
-                                var newItem = item
-
-                                // Input data are strings,
-                                // we need to cast it in a Number object to use the toFixed method.
-                                if (index === 0)
-                                    newItem.solde = Number(this.state.currentSolde.balance)
-                                else
-                                    newItem.solde = Number(list[index-1].solde) - Number(list[index-1].amount)
-
-                                newItem.solde = newItem.solde.toFixed(2)
-                                return newItem
-                            }
-                        );
-
-                        this.setState({historyList: res});
-                    };
-
                     // Get account history
                     if (this.props.loginBDC) {
-                        fetchAuth(getAPIBaseURL +
-                                  "accounts-history/?login_bdc=" + this.props.loginBDC +
-                                  "&account_type=" + this.props.mode, 'get', computeHistoryList)
+                        var urlHistory = (getAPIBaseURL + "accounts-history/?login_bdc=" + this.props.loginBDC +
+                                          "&account_type=" + this.props.mode)
                     }
                     else {
                         if (this.props.mode == 'banque_de_depot') {
-                            fetchAuth(getAPIBaseURL +"banks-history/?mode=historique&bank_name=" + this.props.accountName,
-                                      'get', computeHistoryList)
+                            var urlHistory = getAPIBaseURL +"banks-history/?mode=historique&bank_name=" + this.props.accountName
                         }
                         else if (this.props.mode == 'compte_dedie') {
-                            fetchAuth(getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" +
-                                      this.props.mode + '_eusko_' + this.props.accountName,
-                                      'get', computeHistoryList)
+                            var urlHistory = (getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" +
+                                              this.props.mode + '_eusko_' + this.props.accountName)
                         }
                         else {
-                            fetchAuth(getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" + this.props.mode,
-                                      'get', computeHistoryList)
+                            var urlHistory = getAPIBaseURL + "accounts-history/?cyclos_mode=gi&account_type=" + this.props.mode
                         }
                     }
-                });
+                    fetchAuth(urlHistory, 'get', this.computeHistoryList)
+                }
+            );
         }
+
+        // Get account summary
         if (this.props.loginBDC) {
-            fetchAuth(getAPIBaseURL + "accounts-summaries/" + this.props.loginBDC, 'get', computeHistoryData)
+            var urlSummary = getAPIBaseURL + "accounts-summaries/" + this.props.loginBDC
         }
         else {
             if (this.props.mode == 'banque_de_depot') {
-                fetchAuth(getAPIBaseURL + "deposit-banks-summaries/", 'get', computeHistoryData)
+                var urlSummary = getAPIBaseURL + "deposit-banks-summaries/"
+            }
+            else if (this.props.mode == 'compte_dedie') {
+                var urlSummary = getAPIBaseURL + "dedicated-accounts-summaries/"
             }
             else {
-                fetchAuth(getAPIBaseURL + "system-accounts-summaries/", 'get', computeHistoryData)
+                var urlSummary = getAPIBaseURL + "system-accounts-summaries/"
             }
         }
+        fetchAuth(urlSummary, 'get', computeHistoryData)
     },
 
     render() {
         // Display current solde information
-        if (this.state.currentSolde) {
+        if (this.state.currentSolde || this.state.currentSolde === 0) {
             var currentSoldeLabel = (
                 <span className="solde-history-span">
                     {this.state.currentSolde.balance + " " + this.state.currentSolde.currency}
@@ -209,7 +215,25 @@ var ManagerHistoryPage = React.createClass({
                 </div>
             )
         }
-        else if (this.props.mode == 'compte_de_transit') {
+        else if (this.props.mode == 'banque_de_depot') {
+            var actionButtons = (
+                <div className="row margin-bottom">
+                    <div className="col-md-offset-2 col-md-2 col-sm-4">
+                        <a href={"/banques/rapprochement/" + this.props.accountName} className="btn btn-info">{__("Rapprocher")}</a>
+                    </div>
+                    <div className="col-md-offset-2 col-md-2 col-sm-4">
+                        <a href={"/banques/virement/" + this.props.accountName} className="btn btn-default">{__("Faire un virement")}</a>
+                    </div>
+                    <div className="col-md-offset-1 col-md-2 col-sm-4">
+                        <label className="control-label col-md-12 solde-history-label">
+                            {__("Solde") + ": "}
+                            {currentSoldeLabel}
+                        </label>
+                    </div>
+                </div>
+            )
+        }
+        else {
             var actionButtons = (
                 <div className="row margin-bottom">
                     <div className="col-md-offset-1 col-md-2 col-sm-4">
@@ -223,35 +247,31 @@ var ManagerHistoryPage = React.createClass({
         }
 
         // History data table
-        if (this.state.historyList) {
-            var dateFormatter = (cell, row) => {
-                // Force moment i18n
-                moment.locale(getCurrentLang)
-                return moment(cell).format('LLLL')
-            }
-
-            var amountFormatter = (cell, row) => {
-                // Cell is a string for now,
-                // we need to cast it in a Number object to use the toFixed method.
-                return Number(cell).toFixed(2)
-            }
-
-            var historyTable = (
-                <BootstrapTable
-                 data={this.state.historyList} striped={true} hover={true} pagination={true}
-                 selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
-                 options={{noDataText: __("Pas d'historique à afficher."), hideSizePerPage: true, sizePerPage: 20}}
-                 >
-                    <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="date" dataFormat={dateFormatter}>{__("Date")}</TableHeaderColumn>
-                    <TableHeaderColumn columnClassName="line-break" dataField="description">{__("Libellé")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="amount" dataFormat={amountFormatter}>{__("Montant")}</TableHeaderColumn>
-                    <TableHeaderColumn dataField="solde">{__("Solde")}</TableHeaderColumn>
-                </BootstrapTable>
-            )
+        var dateFormatter = (cell, row) => {
+            // Force moment i18n
+            moment.locale(getCurrentLang)
+            return moment(cell).format('LLLL')
         }
-        else
-            var historyTable = null;
+
+        var amountFormatter = (cell, row) => {
+            // Cell is a string for now,
+            // we need to cast it in a Number object to use the toFixed method.
+            return Number(cell).toFixed(2)
+        }
+
+        var historyTable = (
+            <BootstrapTable
+             data={this.state.historyList} striped={true} hover={true} pagination={true}
+             selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
+             options={{noDataText: __("Pas d'historique à afficher."), hideSizePerPage: true, sizePerPage: 20}}
+             >
+                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="date" dataFormat={dateFormatter}>{__("Date")}</TableHeaderColumn>
+                <TableHeaderColumn columnClassName="line-break" dataField="description">{__("Libellé")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="amount" dataFormat={amountFormatter}>{__("Montant")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="solde">{__("Solde")}</TableHeaderColumn>
+            </BootstrapTable>
+        )
 
         return (
             <div className="row">
