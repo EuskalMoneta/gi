@@ -81,7 +81,7 @@ var GenericPage = React.createClass({
                .value()
 
             var montantTotalRetraits = _.chain(this.state.historyTableSelectedRows)
-               .filter((item) => { return item.type.internalName.toLowerCase() === "compte_des_billets_en_circulation.retrait_de_billets" })
+               .filter((item) => { return item.type.internalName.toLowerCase() === "stock_de_billets_bdc.retrait_de_billets" })
                .reduce((memo, row) => { return memo + Math.abs(row.amount) }, Number(0))
                .value()
 
@@ -89,8 +89,9 @@ var GenericPage = React.createClass({
             var virementVersCompte = null
 
 
-            if (montantTotalDepots === montantTotalRetraits)
+            if (montantTotalDepots === montantTotalRetraits) {
                 var montantVirement = Number()
+            }
             else if (montantTotalDepots > montantTotalRetraits) {
                 var montantVirement = Number(montantTotalDepots - montantTotalRetraits)
                 var virementVersCompte = "numerique"
@@ -176,6 +177,8 @@ var GenericPage = React.createClass({
         if (this.props.mode == 'operations/depots-retraits') {
             postData.montant_total_depots = this.state.montantTotalDepots
             postData.montant_total_retraits = this.state.montantTotalRetraits
+            postData.virement_montant = this.state.montantVirement
+            postData.virement_vers_compte = this.state.virementVersCompte
         }
         else if (this.props.mode == 'operations/reconversions') {
             postData.montant_total_billets = this.state.montantTotalReconversionsBillets
