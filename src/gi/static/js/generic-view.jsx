@@ -39,7 +39,17 @@ var GenericPage = React.createClass({
     componentDidMount() {
         // Get historyTableData
         var computeHistoryTableData = (historyTableData) => {
-            this.setState({historyTableData: historyTableData})
+            try {
+                if (historyTableData.result.pageItems) {
+                    this.setState({historyTableData: historyTableData.result.pageItems})
+                }
+                else {
+                    this.setState({historyTableData: historyTableData})
+                }
+            }
+            catch (e) {
+                this.setState({historyTableData: historyTableData})
+            }
         }
         fetchAuth(this.props.historyURL, 'get', computeHistoryTableData)
     },
