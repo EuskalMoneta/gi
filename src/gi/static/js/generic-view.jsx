@@ -288,7 +288,7 @@ var GenericPage = React.createClass({
             postData.montant_total_cotisations = this.state.montantTotalCotisations
             postData.montant_total_ventes = this.state.montantTotalVentes
             postData.montant_total_billet = this.state.montantTotalBillet
-            postData.montant_total_nmerique = this.state.montantTotalNumerique
+            postData.montant_total_numerique = this.state.montantTotalNumerique
 
         }
 
