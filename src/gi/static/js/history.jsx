@@ -45,7 +45,19 @@ var ManagerHistoryPage = React.createClass({
     },
 
     computeHistoryList(historyList) {
-        var res = _.map(historyList.result.pageItems,
+        try {
+            if (historyList.result.pageItems) {
+                var historyListData = historyList.result.pageItems
+            }
+            else {
+                var historyListData = historyList
+            }
+        }
+        catch (e) {
+            var historyListData = historyList
+        }
+
+        var res = _.map(historyListData,
             (item, index, list) => {
                 var newItem = item
 
