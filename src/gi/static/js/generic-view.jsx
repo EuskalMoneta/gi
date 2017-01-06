@@ -33,13 +33,28 @@ var GenericPage = React.createClass({
             // Reconversions
             montantTotalReconversionsBillets: Number(),
             montantTotalReconversionsNumeriques: Number(),
+            // Banque de dépôt: Virements
+            montantTotalCotisations: Number(),
+            montantTotalVentes: Number(),
+            montantTotalBillet: Number(),
+            montantTotalNumerique: Number()
         }
     },
 
     componentDidMount() {
         // Get historyTableData
         var computeHistoryTableData = (historyTableData) => {
-            this.setState({historyTableData: historyTableData})
+            try {
+                if (historyTableData.result.pageItems) {
+                    this.setState({historyTableData: historyTableData.result.pageItems})
+                }
+                else {
+                    this.setState({historyTableData: historyTableData})
+                }
+            }
+            catch (e) {
+                this.setState({historyTableData: historyTableData})
+            }
         }
         fetchAuth(this.props.historyURL, 'get', computeHistoryTableData)
     },
@@ -62,6 +77,13 @@ var GenericPage = React.createClass({
 
         - Total des reconversions d'eusko billets
         - Total des reconversions d'eusko numériques
+
+        # Dépôt en banque: Virements
+
+        - Total des Cotisations
+        - Total des Ventes
+        - Total des changes d'eusko Billets
+        - Total des changes d'eusko Numerique
     */
     computeAmounts() {
         if (this.props.mode == 'operations/depots-retraits') {
@@ -71,7 +93,7 @@ var GenericPage = React.createClass({
                .value()
 
             var montantTotalRetraits = _.chain(this.state.historyTableSelectedRows)
-               .filter((item) => { return item.type.internalName.toLowerCase() === "compte_des_billets_en_circulation.retrait_de_billets" })
+               .filter((item) => { return item.type.internalName.toLowerCase() === "stock_de_billets_bdc.retrait_de_billets" })
                .reduce((memo, row) => { return memo + Math.abs(row.amount) }, Number(0))
                .value()
 
@@ -79,8 +101,9 @@ var GenericPage = React.createClass({
             var virementVersCompte = null
 
 
-            if (montantTotalDepots === montantTotalRetraits)
+            if (montantTotalDepots === montantTotalRetraits) {
                 var montantVirement = Number()
+            }
             else if (montantTotalDepots > montantTotalRetraits) {
                 var montantVirement = Number(montantTotalDepots - montantTotalRetraits)
                 var virementVersCompte = "numerique"
@@ -109,6 +132,93 @@ var GenericPage = React.createClass({
 
             this.setState({montantTotalReconversionsBillets: montantTotalReconversionsBillets,
                            montantTotalReconversionsNumeriques: montantTotalReconversionsNumeriques},
+                          this.validateForm)
+        }
+        else if (this.props.mode == 'banques/virement') {
+            var montantTotalCotisations = _.chain(this.state.historyTableSelectedRows)
+                .reduce((memo, item) => {
+                    var res = _.filter(
+                        item.customValues,
+                            (j) => {
+                                if (j.field.internalName == "montant_cotisations")
+                                    return j.decimalValue != "0.000000"
+                                else
+                                    return false
+                            }
+                    )
+
+                    if (_.isEmpty(res))
+                        return Number(0)
+                    else
+                        return Number(res[0].decimalValue).toFixed(2)
+                },
+                Number(0))
+                .value()
+
+            var montantTotalVentes = _.chain(this.state.historyTableSelectedRows)
+                .reduce((memo, item) => {
+                    var res = _.filter(
+                        item.customValues,
+                            (j) => {
+                                if (j.field.internalName == "montant_ventes")
+                                    return j.decimalValue != "0.000000"
+                                else
+                                    return false
+                            }
+                    )
+
+                    if (_.isEmpty(res))
+                        return Number(0)
+                    else
+                        return Number(res[0].decimalValue).toFixed(2)
+                },
+                Number(0))
+                .value()
+
+            var montantTotalBillet = _.chain(this.state.historyTableSelectedRows)
+                .reduce((memo, item) => {
+                    var res = _.filter(
+                        item.customValues,
+                            (j) => {
+                                if (j.field.internalName == "montant_changes_billet")
+                                    return j.decimalValue != "0.000000"
+                                else
+                                    return false
+                            }
+                    )
+
+                    if (_.isEmpty(res))
+                        return Number(0)
+                    else
+                        return Number(res[0].decimalValue).toFixed(2)
+                },
+                Number(0))
+                .value()
+
+            var montantTotalNumerique = _.chain(this.state.historyTableSelectedRows)
+                .reduce((memo, item) => {
+                    var res = _.filter(
+                        item.customValues,
+                            (j) => {
+                                if (j.field.internalName == "montant_changes_numerique")
+                                    return j.decimalValue != "0.000000"
+                                else
+                                    return false
+                            }
+                    )
+
+                    if (_.isEmpty(res))
+                        return Number(0)
+                    else
+                        return Number(res[0].decimalValue).toFixed(2)
+                },
+                Number(0))
+                .value()
+
+            this.setState({montantTotalCotisations: montantTotalCotisations,
+                           montantTotalVentes: montantTotalVentes,
+                           montantTotalBillet: montantTotalBillet,
+                           montantTotalNumerique: montantTotalNumerique},
                           this.validateForm)
         }
         else {
@@ -166,10 +276,20 @@ var GenericPage = React.createClass({
         if (this.props.mode == 'operations/depots-retraits') {
             postData.montant_total_depots = this.state.montantTotalDepots
             postData.montant_total_retraits = this.state.montantTotalRetraits
+            postData.virement_montant = this.state.montantVirement
+            postData.virement_vers_compte = this.state.virementVersCompte
         }
         else if (this.props.mode == 'operations/reconversions') {
             postData.montant_total_billets = this.state.montantTotalReconversionsBillets
             postData.montant_total_numerique = this.state.montantTotalReconversionsNumeriques
+        }
+        else if (this.props.mode == 'banques/virement') {
+            postData.bank_name = this.props.bankName
+            postData.montant_total_cotisations = this.state.montantTotalCotisations
+            postData.montant_total_ventes = this.state.montantTotalVentes
+            postData.montant_total_billet = this.state.montantTotalBillet
+            postData.montant_total_numerique = this.state.montantTotalNumerique
+
         }
 
         var computeForm = (data) => {
@@ -332,6 +452,51 @@ var GenericPage = React.createClass({
 
             var messageButton = __("Enregistrer")
         }
+        else if (this.props.mode == 'banques/virement') {
+            var montantCotisationsDiv = (
+                <div className="row">
+                    <div className="col-md-8 margin-top">
+                        <label className="control-label col-md-4">{__("Virement vers le Compte de Gestion  - Cotisations") + " : "}</label>
+                        <span className="col-md-8">{this.state.montantTotalCotisations + " €"}</span>
+                    </div>
+                </div>
+            )
+            var montantVentesDiv = (
+                <div className="row">
+                    <div className="col-md-8">
+                        <label className="control-label col-md-4">{__("Virement vers le Compte de Gestion  - Ventes") + " : "}</label>
+                        <span className="col-md-8">{this.state.montantTotalVentes + " €"}</span>
+                    </div>
+                </div>
+            )
+            var montantBilletDiv = (
+                <div className="row">
+                    <div className="col-md-8">
+                        <label className="control-label col-md-4">{__("Virement vers le Compte dédié eusko billet") + " : "}</label>
+                        <span className="col-md-8">{this.state.montantTotalBillet + " €"}</span>
+                    </div>
+                </div>
+            )
+            var montantNumeriqueDiv = (
+                <div className="row">
+                    <div className="col-md-8">
+                        <label className="control-label col-md-4">{__("Virement vers le Compte dédié eusko numérique") + " : "}</label>
+                        <span className="col-md-8">{this.state.montantTotalNumerique + " €"}</span>
+                    </div>
+                </div>
+            )
+
+            var customInfo = (
+                <div>
+                    {montantCotisationsDiv}
+                    {montantVentesDiv}
+                    {montantBilletDiv}
+                    {montantNumeriqueDiv}
+                </div>
+            )
+
+            var messageButton = __("Enregistrer")
+        }
         else if (this.props.mode == 'operations/reconversions')
         {
             var montantTotalReconversionsBilletsDiv = (
@@ -403,6 +568,7 @@ var GenericPage = React.createClass({
     }
 })
 
+var bankName = undefined
 if (window.location.pathname.toLowerCase().indexOf("coffre/entree") != -1)
 {
     // URL = coffre/entree
@@ -486,6 +652,7 @@ ReactDOM.render(
             nextURL={propNextURL}
             mode={propMode}
             currency={propCurrency}
+            bankName={bankName}
     />,
     document.getElementById('generic-view')
 )
