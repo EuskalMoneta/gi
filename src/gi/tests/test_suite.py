@@ -139,6 +139,61 @@ class TestSuite:
 
         assert len(driver.find_elements_by_xpath('//table[contains(@class, "table-striped")]/tbody/tr')) == 3
 
+    def test_005_validate_reconversions(self, driver):
+        try:
+            driver.wait.until(ec.presence_of_element_located((By.XPATH, '//a[text()="Opérations à traiter"]')))
+        except:
+            driver.close()
+            raise SeleniumTestException('Could not locate link containing "Opérations à traiter" in text!')
+
+        driver.find_element_by_xpath('//a[text()="Opérations à traiter"]').click()
+
+        try:
+            driver.wait.until(ec.presence_of_element_located((By.XPATH, '//a[text()="Reconversions"]')))
+        except:
+            driver.close()
+            raise SeleniumTestException('Could not locate link containing "Reconversions" in text!')
+
+        driver.find_element_by_xpath('//a[text()="Reconversions"]').click()
+
+        # wait until table is populated
+        try:
+            driver.wait.until(ec.presence_of_element_located((By.XPATH,
+                                                              '//td[contains(text(), "Guilde des Mendiants")]')))
+        except:
+            driver.close()
+            raise SeleniumTestException('Could not locate element "class=react-bs-select-all" '
+                                        '(toast success confirm for validate_reconversions page)!')
+
+        # select every line in the table
+        driver.find_element_by_class_name('react-bs-select-all').click()
+
+        # wait until submit button is clickable
+        try:
+            driver.wait.until(ec.element_to_be_clickable((By.CLASS_NAME, 'btn-success')))
+        except:
+            driver.close()
+            raise SeleniumTestException('Could not click element "class=btn-success" (validate_reconversions page)!')
+
+        # validate form
+        driver.find_element_by_class_name('btn-success').click()
+
+        # toast div is in id="toast-container"
+        try:
+            driver.long_wait.until(ec.presence_of_element_located((By.ID, 'toast-container')))
+        except:
+            driver.close()
+            raise SeleniumTestException('Could not locate element "id=toast-container" '
+                                        '(toast parent div for member add page)!')
+
+        # assert div with class="toast-succes" is present : member creation is OK!
+        try:
+            driver.long_wait.until(ec.presence_of_element_located((By.CLASS_NAME, 'toast-success')))
+        except:
+            driver.close()
+            raise SeleniumTestException('Could not locate element "class=toast-success" '
+                                        '(toast success confirm for member add page)!')
+
     def test_999_member_change_password(self, driver):
         driver.find_element_by_class_name('dropdown-toggle').click()
         driver.find_element_by_link_text('Changer mon mot de passe').click()
