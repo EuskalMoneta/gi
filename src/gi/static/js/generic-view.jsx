@@ -364,10 +364,19 @@ var GenericPage = React.createClass({
             return moment(cell).format('LLLL')
         }
 
-        var amountFormatter = (cell, row) => {
-            // Cell is a string for now,
-            // we need to cast it in a Number object to use the toFixed method.
-            return Number(cell).toFixed(2)
+        if (this.props.mode == 'operations/reconversions') {
+            var amountFormatter = (cell, row) => {
+                // Cell is a string for now,
+                // we need to cast it in a Number object to use the toFixed method.
+                return Math.abs(Number(cell)).toFixed(2)
+            }
+        }
+        else {
+            var amountFormatter = (cell, row) => {
+                // Cell is a string for now,
+                // we need to cast it in a Number object to use the toFixed method.
+                return Number(cell).toFixed(2)
+            }
         }
 
         var dataTable = (
