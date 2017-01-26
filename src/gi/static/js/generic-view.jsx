@@ -137,88 +137,105 @@ var GenericPage = React.createClass({
         else if (this.props.mode == 'banques/virement') {
             var montantTotalCotisations = _.chain(this.state.historyTableSelectedRows)
                 .reduce((memo, item) => {
-                    var res = _.filter(
+                    var resCotisations = _.filter(
                         item.customValues,
                             (j) => {
-                                if (j.field.internalName == "montant_cotisations")
+                                if (j.field.internalName == "montant_cotisations") {
                                     return j.decimalValue != "0.000000"
-                                else
+                                }
+                                else {
                                     return false
+                                }
                             }
                     )
 
-                    if (_.isEmpty(res))
-                        return Number(0)
-                    else
-                        return Number(res[0].decimalValue).toFixed(2)
+                    if (_.isEmpty(resCotisations)) {
+                        return Number(Number(memo) + Number(0)).toFixed(2)
+                    }
+                    else {
+                        return Number(Number(memo) + Number(resCotisations[0].decimalValue)).toFixed(2)
+                    }
                 },
                 Number(0))
                 .value()
 
             var montantTotalVentes = _.chain(this.state.historyTableSelectedRows)
                 .reduce((memo, item) => {
-                    var res = _.filter(
+                    var resVentes = _.filter(
                         item.customValues,
                             (j) => {
-                                if (j.field.internalName == "montant_ventes")
+                                if (j.field.internalName == "montant_ventes") {
                                     return j.decimalValue != "0.000000"
-                                else
+                                }
+                                else {
                                     return false
+                                }
                             }
                     )
 
-                    if (_.isEmpty(res))
-                        return Number(0)
-                    else
-                        return Number(res[0].decimalValue).toFixed(2)
+                    if (_.isEmpty(resVentes)) {
+                        return Number(Number(memo) + Number(0)).toFixed(2)
+                    }
+                    else {
+                        return Number(Number(memo) + Number(resVentes[0].decimalValue)).toFixed(2)
+                    }
                 },
                 Number(0))
                 .value()
 
             var montantTotalBillet = _.chain(this.state.historyTableSelectedRows)
                 .reduce((memo, item) => {
-                    var res = _.filter(
+                    var resBillet = _.filter(
                         item.customValues,
                             (j) => {
-                                if (j.field.internalName == "montant_changes_billet")
+                                if (j.field.internalName == "montant_changes_billet") {
                                     return j.decimalValue != "0.000000"
-                                else
+                                }
+                                else {
                                     return false
+                                }
                             }
                     )
 
-                    if (_.isEmpty(res))
-                        return Number(0)
-                    else
-                        return Number(res[0].decimalValue).toFixed(2)
+                    if (_.isEmpty(resBillet)) {
+                        return Number(Number(memo) + Number(0)).toFixed(2)
+                    }
+                    else {
+                        return Number(Number(memo) + Number(resBillet[0].decimalValue)).toFixed(2)
+                    }
                 },
                 Number(0))
                 .value()
 
             var montantTotalNumerique = _.chain(this.state.historyTableSelectedRows)
                 .reduce((memo, item) => {
-                    var res = _.filter(
+                    var resNumerique = _.filter(
                         item.customValues,
                             (j) => {
-                                if (j.field.internalName == "montant_changes_numerique")
+                                if (j.field.internalName == "montant_changes_numerique") {
                                     return j.decimalValue != "0.000000"
-                                else
+                                }
+                                else {
                                     return false
+                                }
                             }
                     )
 
-                    if (_.isEmpty(res))
-                        return Number(0)
-                    else
-                        return Number(res[0].decimalValue).toFixed(2)
+                    if (_.isEmpty(resNumerique)) {
+                        return Number(Number(memo) + Number(0)).toFixed(2)
+                    }
+                    else {
+                        return Number(Number(memo) + Number(resNumerique[0].decimalValue)).toFixed(2)
+                    }
                 },
                 Number(0))
                 .value()
 
-            this.setState({montantTotalCotisations: montantTotalCotisations,
-                           montantTotalVentes: montantTotalVentes,
-                           montantTotalBillet: montantTotalBillet,
-                           montantTotalNumerique: montantTotalNumerique},
+            this.setState({montantTotalCotisations: montantTotalCotisations == "0.00" ? Number() : montantTotalCotisations,
+                           montantTotalVentes: montantTotalVentes == "0.00" ? Number() : montantTotalVentes,
+                           montantTotalBillet: montantTotalBillet == "0.00" ? Number() : montantTotalBillet,
+                           montantTotalNumerique: montantTotalNumerique == "0.00" ? Number() : montantTotalNumerique},
+
                           this.validateForm)
         }
         else {
