@@ -20,6 +20,7 @@ module.exports = Object.keys(languages).map(function(language) {
 
         entry: {
             Base: './static/js/base',
+            ChangePassword: './static/js/change-password',
             Login: './static/js/login',
             BDC: './static/js/bdc',
             BDCManager: './static/js/bdc-manager',

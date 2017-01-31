@@ -30,6 +30,12 @@ if DEBUG and DEBUG in [True, 'true', 'True', 'yes', 'Yes']:
 else:
     DEBUG = False
 
+TEST = os.environ.get('TEST', False)
+if TEST and TEST in [True, 'true', 'True', 'yes', 'Yes']:
+    TEST = True
+else:
+    TEST = False
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -68,11 +74,14 @@ AUTHENTICATION_BACKENDS = [
     'gi.auth.GIAuthBackend',
 ]
 
-API_PUBLIC_URL = os.environ.get('API_PUBLIC_URL')
-API_PUBLIC_URL += '' if API_PUBLIC_URL.endswith('/') else '/'
-
 API_INTERNAL_URL = os.environ.get('API_INTERNAL_URL')
 API_INTERNAL_URL += '' if API_INTERNAL_URL.endswith('/') else '/'
+
+if TEST:
+    API_PUBLIC_URL = API_INTERNAL_URL
+else:
+    API_PUBLIC_URL = os.environ.get('API_PUBLIC_URL')
+    API_PUBLIC_URL += '' if API_PUBLIC_URL.endswith('/') else '/'
 
 # CSP headers
 CSP_DEFAULT_SRC = ["'self'"]
@@ -93,7 +102,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(os.path.dirname(BASE_DIR), 'templates'),
-                 os.path.join(os.path.dirname(BASE_DIR), 'gi', 'templates')],
+                 os.path.join(os.path.dirname(BASE_DIR), 'gi', 'templates'),
+                 os.path.join(os.path.dirname(BASE_DIR), 'base', 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
