@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^login/?$', login_view, name='login'),
     # logout
     url(r'^logout/?$', logout, {'next_page': reverse_lazy('home')}, name='logout'),
+    url(r'^logout/(?P<next_page>[\w\-]+)/?$', logout, name='logout'),
     # change-password
     url(r'^change-password/?$', base_views.change_password, name='change-password'),
 
