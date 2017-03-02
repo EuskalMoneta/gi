@@ -120,16 +120,22 @@ class ChangesPrelevementsPage extends React.Component {
         else
             var invalidCSVDiv = null
 
+
         if (this.state.recapImport) {
             if (this.state.recapImport.errors.length > 0) {
                 var recapImportErrorsList = _.map(this.state.recapImport.errors,
-                    (item) => {
-                        return <span>{__('Entrée: ') + item.item + ' ' + __('Erreur: ') + item.error}</span>
+                    (item, key) => {
+                        return (
+                            <div key={key}>
+                                <span>{__('Entrée: ') + item.item}</span>
+                                <br />
+                                <span>{__('Erreur: ') + item.error}</span>
+                                <br />
+                                <br />
+                            </div>
+                        )
                     }
                 )
-            }
-            else {
-                var recapImportErrorsList = null
             }
 
             var recapImportDiv = (
@@ -147,14 +153,15 @@ class ChangesPrelevementsPage extends React.Component {
                             {__("%%%% entrée(s) ont échouées.").replace('%%%%', this.state.recapImport.errors.length)}
                         </span>
                     </p>
-                    {recapImportErrorsList}
                 </div>
             )
         }
-        else
+        else {
             var recapImportDiv = <div style={{paddingTop: 10}} className="col-md-2 col-md-offset-1">
                                     <span>{__("Aucun crédit de compte en attente.")}</span>
                                  </div>
+            var recapImportErrorsList = null
+        }
 
         const selectRowProp = {
             mode: 'checkbox',
@@ -222,6 +229,11 @@ class ChangesPrelevementsPage extends React.Component {
                                         onClick={this.processPendingOps}
                                         disabled={!this.state.processPendingOps}
                                     />
+                                </div>
+                            </div>
+                            <div className="row margin-top">
+                                <div className="col-md-12">
+                                    {recapImportErrorsList}
                                 </div>
                             </div>
                         </div>
