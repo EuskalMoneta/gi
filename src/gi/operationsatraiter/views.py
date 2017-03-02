@@ -25,3 +25,8 @@ def reconversions(request):
 @login_required
 def depots_retraits(request):
     return render(request, 'operations/depots_retraits.html')
+
+
+@login_required
+def changes_prelevement(request):
+    return render(request, 'operations/changes-prelevement.html')

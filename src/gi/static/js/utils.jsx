@@ -115,6 +115,32 @@ var fetchAuth = (url, method, promise, data=null, promiseError=null) => {
     }
 }
 
+var fetchUpload = (url, method, promise, data, promiseError=null) => {
+    var payload = {
+        method: method,
+        body: data,
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Token ' + getToken()
+        }
+    }
+
+    if (!promiseError) {
+        var promiseError = (err) => {
+            // Error during request, or parsing NOK :(
+            if (err.message != "No content") {
+                console.error(url, method, promise, token, data, promiseError, err)
+            }
+        }
+    }
+
+    fetch(url, payload)
+    .then(checkStatus)
+    .then(parseJSON)
+    .then(promise)
+    .catch(promiseError)
+}
+
 var getUrlParameter = (name) => {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -359,6 +385,7 @@ module.exports = {
     fetchAuth: fetchAuth,
     fetchCustom: fetchCustom,
     fetchGetToken: fetchGetToken,
+    fetchUpload: fetchUpload,
     getUrlParameter: getUrlParameter,
     isMemberIdEusko: isMemberIdEusko,
     isBdcIdEusko: isBdcIdEusko,
