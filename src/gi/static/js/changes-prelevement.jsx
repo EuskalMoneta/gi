@@ -146,7 +146,21 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     deleteItems = () => {
-        // TODO
+        var computeDeleteItems = () => {
+            debugger
+            this.updatePaymentsErrorsTableData()
+            this.updatePendingOps()
+        }
+
+        var promiseErrorDeleteItems = (err) => {
+            debugger
+            // Error during request, or parsing NOK :(
+            if (err.message != "No content") {
+                console.error(getAPIBaseURL + "credits-comptes-prelevement-auto/delete/", 'POST', err)
+            }
+        }
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/delete/",
+                  'POST', computeDeleteItems, {selected_payments: this.state.selectedPaymentsErrors}, promiseErrorDeleteItems)
     }
 
     processPendingOps = () => {
@@ -197,7 +211,6 @@ class ChangesPrelevementsPage extends React.Component {
             var pendingOpsDiv = <span style={{color: 'green'}}>
                                     {__("%%%% crédit(s) de compte sont en attente.").replace('%%%%', this.state.pendingOps.length)}
                                 </span>
-            )
         }
 
         if (this.state.importData) {
