@@ -36,6 +36,7 @@ class ChangesPrelevementsPage extends React.Component {
             // Step 2: Display import recap + Process pending ops
             importData: undefined,
             processPendingOps: false,
+            pendingOps: Array(),
 
             // Step (0) & 3: Display errors that occured during ops' processing in tableData
             paymentsErrorsTableData: Array(),
@@ -45,15 +46,10 @@ class ChangesPrelevementsPage extends React.Component {
 
     importCSV = () => {
         this.disableCanSendCSVButton()
-        var postCSVFileURL = getAPIBaseURL + "credits-comptes-prelevement-auto/import-csv/" + this.state.csvFile.name
+        var postCSVFileURL = getAPIBaseURL + "credits-comptes-prelevement-auto/import/" + this.state.csvFile.name
 
         var computeRecap = (importData) => {
-            if (importData.ok.length > 0)
-                var processPendingOps = true
-            else
-                var processPendingOps = false
-
-            this.setState({importData: importData, processPendingOps: processPendingOps})
+            this.setState({importData: importData}, this.updatePendingOps)
         }
 
         var promiseImportCSVError = (err) => {
@@ -112,27 +108,40 @@ class ChangesPrelevementsPage extends React.Component {
         var computePaymentsErrorsTableData = (paymentsErrorsTableData) => {
             this.setState({paymentsErrorsTableData: paymentsErrorsTableData})
         }
-        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/errors/", 'get', computePaymentsErrorsTableData)
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/list/errors", 'get', computePaymentsErrorsTableData)
+    }
+
+    updatePendingOps = () => {
+        var computePendingOps = (pendingOps) => {
+            if (pendingOps.length > 0)
+                var processPendingOps = true
+            else
+                var processPendingOps = false
+            this.setState({pendingOps: pendingOps, processPendingOps: processPendingOps})
+        }
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/list/pending", 'get', computePendingOps)
     }
 
     componentDidMount = () => {
         this.updatePaymentsErrorsTableData()
+        this.updatePendingOps()
     }
 
     creditAccounts = () => {
         var computeCreditAccounts = () => {
             debugger
             this.updatePaymentsErrorsTableData()
+            this.updatePendingOps()
         }
 
         var promiseErrorCreditAccounts = (err) => {
             debugger
             // Error during request, or parsing NOK :(
             if (err.message != "No content") {
-                console.error(postCSVFileURL, 'POST', err)
+                console.error(getAPIBaseURL + "credits-comptes-prelevement-auto/perform/", 'POST', err)
             }
         }
-        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/credit/",
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/perform/",
                   'POST', computeCreditAccounts, {selected_payments: this.state.selectedPaymentsErrors}, promiseErrorCreditAccounts)
     }
 
@@ -144,17 +153,18 @@ class ChangesPrelevementsPage extends React.Component {
         var computeCreditAccounts = () => {
             debugger
             this.updatePaymentsErrorsTableData()
+            this.updatePendingOps()
         }
 
-        var promiseErrorCreditAccounts = (err) => {
+        var promiseErrorPendingOps = (err) => {
             debugger
             // Error during request, or parsing NOK :(
             if (err.message != "No content") {
-                console.error(postCSVFileURL, 'POST', err)
+                console.error(getAPIBaseURL + "credits-comptes-prelevement-auto/perform/", 'POST', err)
             }
         }
-        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/credit/",
-                  'POST', computeCreditAccounts, {selected_payments: this.state.importData.ok}, promiseErrorCreditAccounts)
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/perform/",
+                  'POST', computeCreditAccounts, {selected_payments: this.state.pendingOps}, promiseErrorPendingOps)
     }
 
     render = () => {
@@ -166,26 +176,36 @@ class ChangesPrelevementsPage extends React.Component {
         else
             var invalidCSVDiv = null
 
-            var creditAccountButton = <input
-                                        name="credit-account"
-                                        data-eusko="changes-prelevement-credit-all"
-                                        type="submit"
-                                        defaultValue={__("Créditer tout")}
-                                        className={this.state.processPendingOps ?
-                                                   "btn btn-default" :
-                                                   "btn btn-default no-hover disabled"}
-                                        onClick={this.processPendingOps}
-                                        disabled={!this.state.processPendingOps}
-                                      />
+        var creditAccountButton = <input
+                                    name="credit-account"
+                                    data-eusko="changes-prelevement-credit-all"
+                                    type="submit"
+                                    defaultValue={__("Créditer tout")}
+                                    className={this.state.processPendingOps ?
+                                               "btn btn-default" :
+                                               "btn btn-default no-hover disabled"}
+                                    onClick={this.processPendingOps}
+                                    disabled={!this.state.processPendingOps}
+                                  />
+
+        if (_.isEmpty(this.state.pendingOps)) {
+            var pendingOpsDiv = <span style={{marginRight: 20, color: 'green'}}>
+                                    {__("Aucun crédit de compte en attente.")}
+                                </span>
+        }
+        else {
+            var pendingOpsDiv = <span style={{color: 'green'}}>
+                                    {__("%%%% crédit(s) de compte sont en attente.").replace('%%%%', this.state.pendingOps.length)}
+                                </span>
+            )
+        }
 
         if (this.state.importData) {
             var importDataDiv = (
-                <div className="col-md-5 col-md-offset-1">
+                <div className="col-md-3 col-md-offset-1">
                     <div className="row">
                         <div className="col-md-8">
-                            <span style={{color: 'green'}}>
-                                {__("%%%% crédit(s) de compte ont été correctement importées et sont en attente.").replace('%%%%', this.state.importData.ok.length)}
-                            </span>
+                            {pendingOpsDiv}
                             <br />
                             <span style={{color: 'grey'}}>
                                 {__("%%%% crédit(s) de compte ont été ignorées.").replace('%%%%', this.state.importData.ignore)}
@@ -234,10 +254,19 @@ class ChangesPrelevementsPage extends React.Component {
             }
         }
         else {
-            var importDataDiv = <div style={{paddingTop: 10}} className="col-md-4 col-md-offset-1">
-                                    <span style={{marginRight: 20}}>{__("Aucun crédit de compte en attente.")}</span>
-                                    {creditAccountButton}
-                                 </div>
+            var importDataDiv = (
+                <div className="col-md-3 col-md-offset-1">
+                    <div className="row">
+                        <div className="col-md-8">
+                            {pendingOpsDiv}
+                        </div>
+                        <div className="col-md-4">
+                            {creditAccountButton}
+                        </div>
+                    </div>
+                </div>
+            )
+
             var importDataErrorsTable = null
         }
 
