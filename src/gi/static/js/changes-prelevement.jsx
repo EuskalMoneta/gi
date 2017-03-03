@@ -34,11 +34,12 @@ class ChangesPrelevementsPage extends React.Component {
             invalidCSVFile: false,
 
             // Step 2: Display import recap + Process pending ops
-            recapImport: undefined,
+            importData: undefined,
             processPendingOps: false,
 
             // Step (0) & 3: Display errors that occured during ops' processing in tableData
-            tableData: Array(),
+            paymentsErrorsTableData: Array(),
+            selectedPaymentsErrors: Array(),
         }
     }
 
@@ -46,12 +47,16 @@ class ChangesPrelevementsPage extends React.Component {
         this.disableCanSendCSVButton()
         var postCSVFileURL = getAPIBaseURL + "credits-comptes-prelevement-auto/import-csv/" + this.state.csvFile.name
 
-        var computeRecap = (recapImport) => {
-            this.setState({recapImport: recapImport})
+        var computeRecap = (importData) => {
+            if (importData.ok.length > 0)
+                var processPendingOps = true
+            else
+                var processPendingOps = false
+
+            this.setState({importData: importData, processPendingOps: processPendingOps})
         }
 
         var promiseImportCSVError = (err) => {
-            debugger
             // Error during request, or parsing NOK :(
             if (err.message != "No content") {
                 console.error(postCSVFileURL, 'POST', err)
@@ -72,27 +77,27 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     onSelectTableRow = (row, isSelected, event) => {
-        var historyTableSelectedRows = this.state.historyTableSelectedRows
+        var selectedPaymentsErrors = this.state.selectedPaymentsErrors
 
         if (isSelected) {
-            historyTableSelectedRows.push(row)
-            this.setState({historyTableSelectedRows: historyTableSelectedRows}, this.computeAmounts)
+            selectedPaymentsErrors.push(row)
+            this.setState({selectedPaymentsErrors: selectedPaymentsErrors})
         }
         else {
-            this.setState({historyTableSelectedRows: _.filter(historyTableSelectedRows,
+            this.setState({selectedPaymentsErrors: _.filter(selectedPaymentsErrors,
                             (item) => {
                                 if (row != item)
                                     return item
                             })
-                          }, this.computeAmounts)
+                          })
         }
     }
 
     onSelectTableAll = (isSelected, rows) => {
         if (isSelected)
-            this.setState({historyTableSelectedRows: rows}, this.computeAmounts)
+            this.setState({selectedPaymentsErrors: rows})
         else
-            this.setState({historyTableSelectedRows: Array()}, this.computeAmounts)
+            this.setState({selectedPaymentsErrors: Array()})
     }
 
     enableCanSendCSVButton = () => {
@@ -103,12 +108,53 @@ class ChangesPrelevementsPage extends React.Component {
         this.setState({canSendCSV: false})
     }
 
-    componentDidMount = () => {
-        // Get tableData
-        var computeHistoryTableData = (tableData) => {
-            this.setState({tableData: tableData.result.pageItems})
+    updatePaymentsErrorsTableData = () => {
+        var computePaymentsErrorsTableData = (paymentsErrorsTableData) => {
+            this.setState({paymentsErrorsTableData: paymentsErrorsTableData})
         }
-        // fetchAuth(getAPIBaseURL + "/toto/", 'get', computeHistoryTableData)
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/errors/", 'get', computePaymentsErrorsTableData)
+    }
+
+    componentDidMount = () => {
+        this.updatePaymentsErrorsTableData()
+    }
+
+    creditAccounts = () => {
+        var computeCreditAccounts = () => {
+            debugger
+            this.updatePaymentsErrorsTableData()
+        }
+
+        var promiseErrorCreditAccounts = (err) => {
+            debugger
+            // Error during request, or parsing NOK :(
+            if (err.message != "No content") {
+                console.error(postCSVFileURL, 'POST', err)
+            }
+        }
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/credit/",
+                  'POST', computeCreditAccounts, {selected_payments: this.state.selectedPaymentsErrors}, promiseErrorCreditAccounts)
+    }
+
+    deleteItems = () => {
+        // TODO
+    }
+
+    processPendingOps = () => {
+        var computeCreditAccounts = () => {
+            debugger
+            this.updatePaymentsErrorsTableData()
+        }
+
+        var promiseErrorCreditAccounts = (err) => {
+            debugger
+            // Error during request, or parsing NOK :(
+            if (err.message != "No content") {
+                console.error(postCSVFileURL, 'POST', err)
+            }
+        }
+        fetchAuth(getAPIBaseURL + "credits-comptes-prelevement-auto/credit/",
+                  'POST', computeCreditAccounts, {selected_payments: this.state.importData.ok}, promiseErrorCreditAccounts)
     }
 
     render = () => {
@@ -120,73 +166,138 @@ class ChangesPrelevementsPage extends React.Component {
         else
             var invalidCSVDiv = null
 
+            var creditAccountButton = <input
+                                        name="credit-account"
+                                        data-eusko="changes-prelevement-credit-all"
+                                        type="submit"
+                                        defaultValue={__("Créditer tout")}
+                                        className={this.state.processPendingOps ?
+                                                   "btn btn-default" :
+                                                   "btn btn-default no-hover disabled"}
+                                        onClick={this.processPendingOps}
+                                        disabled={!this.state.processPendingOps}
+                                      />
 
-        if (this.state.recapImport) {
-            if (this.state.recapImport.errors.length > 0) {
-                var recapImportErrorsList = _.map(this.state.recapImport.errors,
-                    (item, key) => {
-                        return (
-                            <div key={key}>
-                                <span>{__('Entrée: ') + item.item}</span>
-                                <br />
-                                <span>{__('Erreur: ') + item.error}</span>
-                                <br />
-                                <br />
-                            </div>
-                        )
-                    }
-                )
-            }
-
-            var recapImportDiv = (
-                <div className="col-md-2 col-md-offset-1">
-                    <p>
-                        <span style={{color: 'green'}}>
-                            {__("%%%% entrée(s) ont été importées.").replace('%%%%', this.state.recapImport.ok)}
-                        </span>
-                        <br />
-                        <span style={{color: 'grey'}}>
-                            {__("%%%% entrée(s) ont été ignorées.").replace('%%%%', this.state.recapImport.ignore)}
-                        </span>
-                        <br />
-                        <span style={{color: 'red'}}>
-                            {__("%%%% entrée(s) ont échouées.").replace('%%%%', this.state.recapImport.errors.length)}
-                        </span>
-                    </p>
+        if (this.state.importData) {
+            var importDataDiv = (
+                <div className="col-md-5 col-md-offset-1">
+                    <div className="row">
+                        <div className="col-md-8">
+                            <span style={{color: 'green'}}>
+                                {__("%%%% crédit(s) de compte ont été correctement importées et sont en attente.").replace('%%%%', this.state.importData.ok.length)}
+                            </span>
+                            <br />
+                            <span style={{color: 'grey'}}>
+                                {__("%%%% crédit(s) de compte ont été ignorées.").replace('%%%%', this.state.importData.ignore)}
+                            </span>
+                            <br />
+                            <span style={{color: 'red'}}>
+                                {__("%%%% crédit(s) de compte ont échouées.").replace('%%%%', this.state.importData.errors.length)}
+                            </span>
+                        </div>
+                        <div className="col-md-4">
+                            {creditAccountButton}
+                        </div>
+                    </div>
                 </div>
             )
+
+            if (_.isEmpty(this.state.importData.errors)) {
+                var importDataErrorsTable = null
+            }
+            else {
+                var importDataErrorsDateFormatter = (cell, row) => {
+                    // Force moment i18n
+                    moment.locale(getCurrentLang)
+                    return moment(cell).format('L')
+                }
+
+                var importDataErrorsTable = (
+                    <div>
+                        <h3 style={{paddingLeft: 30, marginBottom: 20}}>{__("Erreurs d'importation")}</h3>
+                        <BootstrapTable
+                             data={this.state.importData.errors}
+                              tableContainerClass="react-bs-table-account-history"
+                             options={{noDataText: __("Rien à afficher.")}} striped={true} hover={false}
+                             >
+                                <TableHeaderColumn isKey={true} hidden={true} dataField="ref">{__("ID")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="ref">{__("Référence")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="adherent_id">{__("N° Adhérent")}</TableHeaderColumn>
+                                <TableHeaderColumn width='400' dataField="adherent_name">{__("Adhérent")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="montant">{__("Montant")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="date" dataFormat={importDataErrorsDateFormatter}>{__("Date ")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="operation_date" dataFormat={importDataErrorsDateFormatter}>{__("Date d'opération")}</TableHeaderColumn>
+                                <TableHeaderColumn columnClassName="line-break" dataField="error">{__("Erreur lors de l'import")}</TableHeaderColumn>
+                        </BootstrapTable>
+                    </div>
+                )
+            }
         }
         else {
-            var recapImportDiv = <div style={{paddingTop: 10}} className="col-md-2 col-md-offset-1">
-                                    <span>{__("Aucun crédit de compte en attente.")}</span>
+            var importDataDiv = <div style={{paddingTop: 10}} className="col-md-4 col-md-offset-1">
+                                    <span style={{marginRight: 20}}>{__("Aucun crédit de compte en attente.")}</span>
+                                    {creditAccountButton}
                                  </div>
-            var recapImportErrorsList = null
+            var importDataErrorsTable = null
         }
 
-        const selectRowProp = {
-            mode: 'checkbox',
-            clickToSelect: false,
-            onSelect: this.onSelectTableRow,
-            onSelectAll: this.onSelectTableAll,
+        if (_.isEmpty(this.state.paymentsErrorsTableData)) {
+            var dataTable = null
+            var dataTableButtons = null
         }
+        else {            
+            const selectRowProp = {
+                mode: 'checkbox',
+                clickToSelect: false,
+                onSelect: this.onSelectTableRow,
+                onSelectAll: this.onSelectTableAll,
+            }
 
-        var dateFormatter = (cell, row) => {
-            // Force moment i18n
-            moment.locale(getCurrentLang)
-            return moment(cell).format('LLLL')
+            var dateFormatter = (cell, row) => {
+                // Force moment i18n
+                moment.locale(getCurrentLang)
+                return moment(cell).format('LLLL')
+            }
+
+            var dataTable = (
+                <div>
+                    <h3 style={{paddingLeft: 30, marginBottom: 20}}>{__("Erreurs de paiement")}</h3>
+                    <BootstrapTable
+                     data={this.state.paymentsErrorsTableData} striped={true} hover={true}
+                     selectRow={selectRowProp} tableContainerClass="react-bs-table-account-history"
+                     options={{noDataText: __("Rien à afficher.")}}
+                     >
+                        <TableHeaderColumn isKey={true} hidden={true} dataField="ref">{__("ID")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="ref">{__("Référence")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="adherent_id">{__("N° Adhérent")}</TableHeaderColumn>
+                        <TableHeaderColumn width='400' dataField="adherent_name">{__("Adhérent")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="montant">{__("Montant")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="date" dataFormat={importDataErrorsDateFormatter}>{__("Date ")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="operation_date" dataFormat={importDataErrorsDateFormatter}>{__("Date d'opération")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="cyclos_payment_id">{__("ID du crédit de compte")}</TableHeaderColumn>
+                        <TableHeaderColumn columnClassName="line-break" dataField="error">{__("Erreur lors de l'import")}</TableHeaderColumn>
+                    </BootstrapTable>
+                </div>
+            )
+
+            var dataTableButtons = (<div className="row">
+                       <div className="margin-top col-md-offset-2 col-md-1">
+                            <button onClick={this.creditAccounts}
+                                    className="btn btn-success enable-pointer-events"
+                                    disabled={_.isEmpty(this.state.selectedPaymentsErrors)}>
+                                    {__("Créditer le compte")} <i className="glyphicon glyphicon-euro"></i>
+                            </button>
+                       </div>
+                       <div className="margin-top col-md-offset-2 col-md-1">
+                            <button onClick={this.deleteItems}
+                                    className="btn btn-danger enable-pointer-events"
+                                    disabled={_.isEmpty(this.state.selectedPaymentsErrors)}>
+                                    {__("Supprimer")} <i className="glyphicon glyphicon-trash"></i>
+                            </button>
+                       </div>
+                    </div>
+            )
         }
-
-        var dataTable = (
-            <BootstrapTable
-             data={this.state.tableData} striped={true} hover={true}
-             selectRow={selectRowProp} tableContainerClass="react-bs-table-account-history"
-             options={{noDataText: __("Rien à afficher.")}}
-             >
-                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="date" dataFormat={dateFormatter}>{__("Date")}</TableHeaderColumn>
-                <TableHeaderColumn columnClassName="line-break" dataField="description">{__("Libellé")}</TableHeaderColumn>
-            </BootstrapTable>
-        )
 
 
         return <div className="row">
@@ -216,59 +327,21 @@ class ChangesPrelevementsPage extends React.Component {
                                 {invalidCSVDiv}
                             </div>
                             <div className="row" style={{marginTop: 30}}>
-                                {recapImportDiv}
-                                <div className="col-md-1">
-                                    <input
-                                        name="credit-account"
-                                        data-eusko="changes-prelevement-credit-all"
-                                        type="submit"
-                                        defaultValue={__("Créditer tout")}
-                                        className={this.state.processPendingOps ?
-                                                   "btn btn-default" :
-                                                   "btn btn-default no-hover disabled"}
-                                        onClick={this.processPendingOps}
-                                        disabled={!this.state.processPendingOps}
-                                    />
-                                </div>
+                                {importDataDiv}
                             </div>
                             <div className="row margin-top">
                                 <div className="col-md-12">
-                                    {recapImportErrorsList}
+                                    {importDataErrorsTable}
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="row">
-                        <div style={{marginTop: 40}} className="col-md-12">
+                        <div style={{marginTop: 30}} className="col-md-12">
                             {dataTable}
                         </div>
                     </div>
-                    {/* <div className="row">
-                    //     <div className="margin-top col-md-offset-2 col-md-1">
-                    //         <input
-                    //             name="credit-account"
-                    //             data-eusko="changes-prelevement-credit-account"
-                    //             type="submit"
-                    //             defaultValue={__("Créditer le compte")}
-                    //             className="btn btn-success"
-                    //             formNoValidate={true}
-                    //             onClick={this.creditAccount}
-                    //             // disabled={!this.state.canSubmit}
-                    //         />
-                    //     </div>
-                    //     <div className="margin-top col-md-offset-2 col-md-1">
-                    //         <input
-                    //             name="delete-items"
-                    //             data-eusko="changes-prelevement-delete-items"
-                    //             type="submit"
-                    //             defaultValue={__("Supprimer")}
-                    //             className="btn btn-danger"
-                    //             formNoValidate={true}
-                    //             onClick={this.deleteItems}
-                    //             // disabled={!this.state.canSubmit}
-                    //         />
-                    //     </div>
-                    // </div>*/}
+                    {dataTableButtons}
                 </div>
     }
 }
