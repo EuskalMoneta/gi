@@ -128,8 +128,7 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     creditAccounts = () => {
-        var computeCreditAccounts = () => {
-            debugger
+        var computeCreditAccounts = (data) => {
             this.updatePaymentsErrorsTableData()
             this.updatePendingOps()
         }
@@ -146,8 +145,7 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     deleteItems = () => {
-        var computeDeleteItems = () => {
-            debugger
+        var computeDeleteItems = (data) => {
             this.updatePaymentsErrorsTableData()
             this.updatePendingOps()
         }
@@ -164,8 +162,7 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     processPendingOps = () => {
-        var computeCreditAccounts = () => {
-            debugger
+        var computeCreditAccounts = (data) => {
             this.updatePaymentsErrorsTableData()
             this.updatePendingOps()
         }
@@ -260,7 +257,7 @@ class ChangesPrelevementsPage extends React.Component {
                                 <TableHeaderColumn dataField="montant">{__("Montant")}</TableHeaderColumn>
                                 <TableHeaderColumn dataField="date" dataFormat={importDataErrorsDateFormatter}>{__("Date ")}</TableHeaderColumn>
                                 <TableHeaderColumn dataField="operation_date" dataFormat={importDataErrorsDateFormatter}>{__("Date d'opération")}</TableHeaderColumn>
-                                <TableHeaderColumn columnClassName="line-break" dataField="error">{__("Erreur lors de l'import")}</TableHeaderColumn>
+                                <TableHeaderColumn columnClassName="line-break" dataField="cyclos_error">{__("Erreur lors de l'import")}</TableHeaderColumn>
                         </BootstrapTable>
                     </div>
                 )
@@ -312,12 +309,12 @@ class ChangesPrelevementsPage extends React.Component {
                         <TableHeaderColumn isKey={true} hidden={true} dataField="ref">{__("ID")}</TableHeaderColumn>
                         <TableHeaderColumn dataField="ref">{__("Référence")}</TableHeaderColumn>
                         <TableHeaderColumn dataField="adherent_id">{__("N° Adhérent")}</TableHeaderColumn>
-                        <TableHeaderColumn width='400' dataField="adherent_name">{__("Adhérent")}</TableHeaderColumn>
+                        <TableHeaderColumn dataField="adherent_name">{__("Adhérent")}</TableHeaderColumn>
                         <TableHeaderColumn dataField="montant">{__("Montant")}</TableHeaderColumn>
                         <TableHeaderColumn dataField="date" dataFormat={importDataErrorsDateFormatter}>{__("Date ")}</TableHeaderColumn>
                         <TableHeaderColumn dataField="operation_date" dataFormat={importDataErrorsDateFormatter}>{__("Date d'opération")}</TableHeaderColumn>
                         <TableHeaderColumn dataField="cyclos_payment_id">{__("ID du crédit de compte")}</TableHeaderColumn>
-                        <TableHeaderColumn columnClassName="line-break" dataField="error">{__("Erreur lors de l'import")}</TableHeaderColumn>
+                        <TableHeaderColumn columnClassName="line-break" dataField="cyclos_error">{__("Erreur lors de l'import")}</TableHeaderColumn>
                     </BootstrapTable>
                 </div>
             )
