@@ -281,10 +281,12 @@ var NavbarRight = React.createClass({
 
     componentDidMount() {
         // Get bdc name
-        var computeData = (data) => {
-            this.setState({bdcName: data})
+        if (window.config.userAuth) {
+            var computeData = (data) => {
+                this.setState({bdcName: data})
+            }
+            fetchAuth(getAPIBaseURL + "bdc-name/", 'get', computeData)
         }
-        fetchAuth(getAPIBaseURL + "bdc-name/", 'get', computeData)
     },
 
     toggleDropdown() {
