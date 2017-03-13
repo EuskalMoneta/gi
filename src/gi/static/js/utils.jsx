@@ -1,21 +1,44 @@
 var checkStatus = (response) => {
-    if (response.status != 204 && response.status >= 200 && response.status < 401) {
+    if (response.status >= 200 && response.status <= 401) {
         return response
     }
-    else if (response.status == 204) {
-        var error = new Error("No content")
-        error.response = response
-        throw error
-    }
     else {
-        var error = new Error(response.statusText)
-        error.response = response
-        throw error
+        try {
+            // If we got a forbidden (403) response,
+            // *AND* we're not already in the login page
+            // *AND* the call we've made was for the Euskal Moneta API and *NOT* the Django front
+            // we redirect to the login page, in this page a "session expired" message will be displayed
+            if (response.statusText == "Forbidden"
+                && window.location.pathname.indexOf("/login") === -1
+                && response.url.indexOf(window.config.getAPIBaseURL) != -1) {
+                window.location.assign("/logout?next=" + window.location.pathname)
+            }
+            else {
+                var error = new Error(response.statusText)
+                error.response = response
+                throw error
+            }
+        }
+        catch(e) {
+            var error = new Error(response.statusText)
+            error.response = response
+            throw error
+        }
     }
 }
 
 var parseJSON = (response) => {
-    return response.json()
+    if (response.status == 204) {
+        return {}
+    }
+    else if (response.status == 400 || response.status == 401) {
+        var error = new Error(response.statusText)
+        error.response = response
+        throw error
+    }
+    else {
+        return response.json()
+    }
 }
 
 var checkSession = (data) => {
