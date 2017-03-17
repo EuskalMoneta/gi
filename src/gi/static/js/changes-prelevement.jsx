@@ -62,7 +62,7 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     selectCSV = (handler) => {
-        if (handler.target.files[0].type == "text/csv") {
+        if (handler.target.files[0].type == "text/csv" || handler.target.files[0].type == "application/csv") {
             this.setState({csvFile: handler.target.files[0], invalidCSVFile: false})
             this.enableCanSendCSVButton()
         }
