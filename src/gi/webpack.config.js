@@ -35,6 +35,7 @@ module.exports = Object.keys(languages).map(function(language) {
             History: './static/js/history',
             BankDeposit: './static/js/bank-deposit',
             CashDeposit: './static/js/cash-deposit',
+            ChangesPrelevement: './static/js/changes-prelevement',
         },
 
         output: {

@@ -17,6 +17,10 @@ body {
   overflow-x: hidden;
 }
 
+.disable-pointer-events {
+  pointer-events: none;
+}
+
 textarea {
   resize: none;
 }
@@ -77,6 +81,12 @@ textarea {
   background-color: #95a5a6;
   color: #ffffff;
   border-color: #95a5a6;
+}
+
+.no-hover.btn-default.disabled:hover, .no-hover.disabled.btn-default[disabled]:hover {
+    background-color: #ffffff !important;
+    color: #95a5a6 !important;
+    border-color: #95a5a6 !important;
 }
 
 .btn-inverse {
