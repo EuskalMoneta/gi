@@ -60,7 +60,7 @@ var BDCList = React.createClass({
                             tableContainerClass="react-bs-table-list-bdc" options={{noDataText: __("Rien à afficher.")}}
             >
                 <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="login" width="100">{__("Code")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="login" width="100px">{__("Code")}</TableHeaderColumn>
                 <TableHeaderColumn dataField="name">{__("Nom")}</TableHeaderColumn>
             </BootstrapTable>
         )
