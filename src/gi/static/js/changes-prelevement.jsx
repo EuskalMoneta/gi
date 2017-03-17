@@ -134,7 +134,6 @@ class ChangesPrelevementsPage extends React.Component {
         }
 
         var promiseErrorCreditAccounts = (err) => {
-            debugger
             // Error during request, or parsing NOK :(
             if (err.message != "No content") {
                 console.error(getAPIBaseURL + "credits-comptes-prelevement-auto/perform/", 'POST', err)
@@ -151,7 +150,6 @@ class ChangesPrelevementsPage extends React.Component {
         }
 
         var promiseErrorDeleteItems = (err) => {
-            debugger
             // Error during request, or parsing NOK :(
             if (err.message != "No content") {
                 console.error(getAPIBaseURL + "credits-comptes-prelevement-auto/delete/", 'POST', err)
@@ -168,7 +166,6 @@ class ChangesPrelevementsPage extends React.Component {
         }
 
         var promiseErrorPendingOps = (err) => {
-            debugger
             // Error during request, or parsing NOK :(
             if (err.message != "No content") {
                 console.error(getAPIBaseURL + "credits-comptes-prelevement-auto/perform/", 'POST', err)
