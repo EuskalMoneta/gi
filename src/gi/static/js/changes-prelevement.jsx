@@ -31,7 +31,6 @@ class ChangesPrelevementsPage extends React.Component {
             // Step 1: Import CSV
             csvFile: undefined,
             canSendCSV: false,
-            invalidCSVFile: false,
 
             // Step 2: Display import recap + Process pending ops
             importData: undefined,
@@ -62,14 +61,8 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     selectCSV = (handler) => {
-        if (handler.target.files[0].type == "text/csv" || handler.target.files[0].type == "application/csv") {
-            this.setState({csvFile: handler.target.files[0], invalidCSVFile: false})
-            this.enableCanSendCSVButton()
-        }
-        else {
-            this.setState({csvFile: undefined, invalidCSVFile: true})
-            this.disableCanSendCSVButton()
-        }
+        this.setState({csvFile: handler.target.files[0]})
+        this.enableCanSendCSVButton()
     }
 
     onSelectTableRow = (row, isSelected, event) => {
@@ -176,14 +169,6 @@ class ChangesPrelevementsPage extends React.Component {
     }
 
     render = () => {
-        if (this.state.invalidCSVFile) {
-            var invalidCSVDiv = <div style={{paddingTop: 10, color: 'red'}} className="col-md-3">
-                                    <span>{__("Le fichier sélectionné n'est pas un fichier CSV.")}</span>
-                                </div>
-        }
-        else
-            var invalidCSVDiv = null
-
         var creditAccountButton = <input
                                     name="credit-account"
                                     data-eusko="changes-prelevement-credit-all"
@@ -360,7 +345,6 @@ class ChangesPrelevementsPage extends React.Component {
                                      disabled={!this.state.canSendCSV}
                                     />
                                 </div>
-                                {invalidCSVDiv}
                             </div>
                             <div className="row" style={{marginTop: 30}}>
                                 {importDataDiv}
