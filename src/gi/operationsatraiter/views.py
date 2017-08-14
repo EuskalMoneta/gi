@@ -30,3 +30,8 @@ def depots_retraits(request):
 @login_required
 def changes_prelevement(request):
     return render(request, 'operations/changes-prelevement.html')
+
+
+@login_required
+def dons_3_pourcent(request):
+    return render(request, 'operations/dons-3-pourcent.html')
