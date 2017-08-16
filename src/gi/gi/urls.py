@@ -79,6 +79,7 @@ urlpatterns = [
     url(r'^operations/reconversions/?$', base_views.generic_history_validation, name='operations-reconversions'),
     url(r'^operations/depots-retraits/?$', base_views.generic_history_validation, name='operations-depots-retraits'),
     url(r'^operations/changes-prelevement/?$', operations_views.changes_prelevement, name='operations-changes-prelevement'),
+    url(r'^operations/dons-3-pourcent/?$', operations_views.dons_3_pourcent, name='operations-dons-3-pourcent'),
 
     # home
     url(r'^$', bdc_views.index, name='home'),

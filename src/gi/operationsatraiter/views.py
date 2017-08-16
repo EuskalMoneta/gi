@@ -8,25 +8,10 @@ def index(request):
 
 
 @login_required
-def entrees_euro(request):
-    return render(request, 'operations/entrees_euro.html')
-
-
-@login_required
-def entrees_eusko(request):
-    return render(request, 'operations/entrees_eusko.html')
-
-
-@login_required
-def reconversions(request):
-    return render(request, 'operations/reconversions.html')
-
-
-@login_required
-def depots_retraits(request):
-    return render(request, 'operations/depots_retraits.html')
-
-
-@login_required
 def changes_prelevement(request):
     return render(request, 'operations/changes-prelevement.html')
+
+
+@login_required
+def dons_3_pourcent(request):
+    return render(request, 'operations/dons-3-pourcent.html')
