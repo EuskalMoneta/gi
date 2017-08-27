@@ -53,9 +53,12 @@ class ExportVersOdooPage extends React.Component {
         this.disableButton()
 
         var saveFile = (blob) => {
-            # Write the CSV file without BOM (else it cannot be
-            # imported in Odoo).
-            # see https://www.npmjs.com/package/file-saver
+            // Write the CSV file.
+            // By default FileSaver writes a BOM and we disable that
+            // because it makes the import in Odoo fail (specifically
+            // the automatic matching of the 1rst column fails).
+            // The syntax is: saveAs(data, filename, disableAutoBOM)
+            // See https://www.npmjs.com/package/file-saver
             FileSaver.saveAs(blob, 'export.csv', true)
         }
 
