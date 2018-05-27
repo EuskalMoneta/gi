@@ -15,3 +15,8 @@ def changes_prelevement(request):
 @login_required
 def dons_3_pourcent(request):
     return render(request, 'operations/dons-3-pourcent.html')
+
+
+@login_required
+def export_compta_odoo(request):
+    return render(request, 'operations/export-compta-odoo.html')

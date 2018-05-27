@@ -60,6 +60,11 @@ var Operations = React.createClass({
                             <a href="/operations/dons-3-pourcent" className="btn btn-default">{__("Dons 3% aux associations")}</a>
                         </div>
                     </div>
+                    <div className="row margin-top">
+                        <div className="col-md-4">
+                            <a href="/operations/export-compta-odoo/" className="btn btn-default">{__("Générer un export pour la comptabilité (Odoo)")}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
