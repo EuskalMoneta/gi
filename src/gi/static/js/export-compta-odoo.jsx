@@ -53,7 +53,10 @@ class ExportComptaOdooPage extends React.Component {
         this.disableButton()
 
         var saveCsvFile = (blob) => {
-            FileSaver.saveAs(blob, 'export_compta_odoo.csv')
+            # Write the CSV file without BOM (else it cannot be
+            # imported in Odoo).
+            # see https://www.npmjs.com/package/file-saver
+            FileSaver.saveAs(blob, 'export_compta_odoo.csv', true)
         }
 
         var promiseError = (err) => {
