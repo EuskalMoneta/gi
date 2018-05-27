@@ -56,10 +56,6 @@ class Dons3PourcentPage extends React.Component {
     submitForm = (data) => {
         this.disableButton()
 
-        var postData = {}
-        postData.begin = this.state.startDate
-        postData.end = this.state.endDate
-
         var displayResult = (data) => {
             this.refs.container.success(
                 __("Le calcul s'est déroulé correctement."),
@@ -104,7 +100,8 @@ class Dons3PourcentPage extends React.Component {
         var url = getAPIBaseURL + "calculate-3-percent/?begin=" +
             moment(this.state.startDate).format("YYYY-MM-DD") + "&end=" +
             moment(this.state.endDate).format("YYYY-MM-DD")
-        fetchAuth(url, 'GET', displayResult, postData, promiseError)
+
+        fetchAuth(url, 'GET', displayResult, null, promiseError)
     }
 
     render = () => {
