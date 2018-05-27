@@ -113,7 +113,7 @@ class Dons3PourcentPage extends React.Component {
                         <div data-eusko="dons-3-pourcent-start-date">
                             <DatePicker
                                 className="form-control"
-                                selected={moment(this.state.startDate)}
+                                selected={this.state.startDate}
                                 onChange={this.handleStartDateChange}
                                 locale="fr"
                             />
@@ -121,7 +121,7 @@ class Dons3PourcentPage extends React.Component {
                         <div data-eusko="dons-3-pourcent-end-date">
                             <DatePicker
                                 className="form-control"
-                                selected={moment(this.state.endDate)}
+                                selected={this.state.endDate}
                                 onChange={this.handleEndDateChange}
                                 locale="fr"
                             />
