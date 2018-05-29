@@ -18,5 +18,5 @@ def dons_3_pourcent(request):
 
 
 @login_required
-def export_compta_odoo(request):
-    return render(request, 'operations/export-compta-odoo.html')
+def export_vers_odoo(request):
+    return render(request, 'operations/export-vers-odoo.html')

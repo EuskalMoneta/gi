@@ -62,7 +62,7 @@ var Operations = React.createClass({
                     </div>
                     <div className="row margin-top">
                         <div className="col-md-4">
-                            <a href="/operations/export-compta-odoo/" className="btn btn-default">{__("Générer un export pour la comptabilité (Odoo)")}</a>
+                            <a href="/operations/export-vers-odoo/" className="btn btn-default">{__("Export vers Odoo")}</a>
                         </div>
                     </div>
                 </div>
