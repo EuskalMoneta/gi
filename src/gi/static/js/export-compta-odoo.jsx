@@ -75,7 +75,7 @@ class ExportComptaOdooPage extends React.Component {
             )
         }
 
-        var url = getAPIBaseURL + "export-compta-odoo/?begin=" +
+        var url = getAPIBaseURL + "export-vers-odoo/?begin=" +
             moment(this.state.startDate).format("YYYY-MM-DD") + "&end=" +
             moment(this.state.endDate).format("YYYY-MM-DD")
 
