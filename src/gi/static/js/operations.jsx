@@ -65,6 +65,9 @@ var Operations = React.createClass({
                         <div className="col-md-6">
                             <a href="/operations/changes-prelevement" className="btn btn-default">{__("Changes par prélèvement automatique")}</a>
                         </div>
+                        <div className="col-md-6">
+                            <a href="/operations/change-virement" className="btn btn-default">{__("Change par virement")}</a>
+                        </div>
                     </div>
                 </div>
             </div>

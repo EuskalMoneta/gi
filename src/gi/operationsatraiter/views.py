@@ -13,6 +13,11 @@ def changes_prelevement(request):
 
 
 @login_required
+def change_virement(request):
+    return render(request, 'operations/change-virement.html')
+
+
+@login_required
 def dons_3_pourcent(request):
     return render(request, 'operations/dons-3-pourcent.html')
 
