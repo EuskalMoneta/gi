@@ -70,6 +70,8 @@ class ChangeVirementPage extends React.Component {
                     closeButton:true
                 }
             )
+
+            setTimeout(() => window.location.assign('/operations'), 3000)
         }
 
         var promiseError = (err) => {
