@@ -36,7 +36,9 @@ module.exports = Object.keys(languages).map(function(language) {
             BankDeposit: './static/js/bank-deposit',
             CashDeposit: './static/js/cash-deposit',
             ChangesPrelevement: './static/js/changes-prelevement',
+            ChangeVirement: './static/js/change-virement',
             Dons3Pourcent: './static/js/dons-3-pourcent',
+            ExportVersOdoo: './static/js/export-vers-odoo',
         },
 
         output: {

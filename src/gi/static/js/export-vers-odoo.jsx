@@ -7,13 +7,12 @@ import {
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import 'node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.css'
+import FileSaver from 'file-saver'
 
 var {ToastContainer} = ReactToastr; // This is a React Element.
 var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation);
 
-class Dons3PourcentPage extends React.Component {
+class ExportVersOdooPage extends React.Component {
 
     constructor(props) {
         super(props)
@@ -23,9 +22,6 @@ class Dons3PourcentPage extends React.Component {
             canSubmit: false,
             startDate: undefined,
             endDate: undefined,
-            totalChanges: undefined,
-            totalDons: undefined,
-            dons: Array(),
         }
     }
 
@@ -56,29 +52,14 @@ class Dons3PourcentPage extends React.Component {
     submitForm = (data) => {
         this.disableButton()
 
-        var displayResult = (data) => {
-            this.refs.container.success(
-                __("Le calcul s'est déroulé correctement."),
-                "",
-                {
-                    timeOut: 5000,
-                    extendedTimeOut: 10000,
-                    closeButton:true
-                }
-            )
-
-            this.setState({
-                totalChanges: data.montant_total_changes,
-                totalDons: data.montant_total_dons,
-                dons: data.dons.map(function(don) {
-                    return {
-                        id: don.association.num_adherent,
-                        name: don.association.nom,
-                        nb_parrainages: don.nb_parrainages,
-                        don: don.montant_don
-                    }
-                })
-            })
+        var saveFile = (blob) => {
+            // Write the CSV file.
+            // By default FileSaver writes a BOM and we disable that
+            // because it makes the import in Odoo fail (specifically
+            // the automatic matching of the 1rst column fails).
+            // The syntax is: saveAs(data, filename, disableAutoBOM)
+            // See https://www.npmjs.com/package/file-saver
+            FileSaver.saveAs(blob, 'export.csv', true)
         }
 
         var promiseError = (err) => {
@@ -97,11 +78,11 @@ class Dons3PourcentPage extends React.Component {
             )
         }
 
-        var url = getAPIBaseURL + "calculate-3-percent/?begin=" +
+        var url = getAPIBaseURL + "export-vers-odoo/?begin=" +
             moment(this.state.startDate).format("YYYY-MM-DD") + "&end=" +
             moment(this.state.endDate).format("YYYY-MM-DD")
 
-        fetchAuth(url, 'GET', displayResult, null, promiseError)
+        fetchAuth(url, 'GET', saveFile, null, promiseError, 'text/csv')
     }
 
     render = () => {
@@ -110,7 +91,7 @@ class Dons3PourcentPage extends React.Component {
                 <Formsy.Form onValidSubmit={this.submitForm}>
                     <div className="col-md-10">
                         <label className="control-label">{__("Période :")}</label>
-                        <div data-eusko="dons-3-pourcent-start-date">
+                        <div data-eusko="export-vers-odoo-start-date">
                             <DatePicker
                                 className="form-control"
                                 selected={this.state.startDate}
@@ -118,7 +99,7 @@ class Dons3PourcentPage extends React.Component {
                                 locale="fr"
                             />
                         </div>
-                        <div data-eusko="dons-3-pourcent-end-date">
+                        <div data-eusko="export-vers-odoo-end-date">
                             <DatePicker
                                 className="form-control"
                                 selected={this.state.endDate}
@@ -130,7 +111,7 @@ class Dons3PourcentPage extends React.Component {
                     <div className="col-md-10">
                                 <input
                                     name="submit"
-                                    data-eusko="dons-3-pourcent-submit"
+                                    data-eusko="export-vers-odoo-submit"
                                     type="submit"
                                     defaultValue={__("Valider")}
                                     className="btn btn-success"
@@ -139,34 +120,6 @@ class Dons3PourcentPage extends React.Component {
                                 />
                     </div>
                 </Formsy.Form>
-                <div className="col-md-10">
-                    <div className="row">
-                        <div className="col-sm-3 col-sm-offset-1">
-                            <label>{__("Montant total du change d'euros en eusko :") + " "}
-                                <span>{this.state.totalChanges}</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-sm-3 col-sm-offset-1">
-                            <label>{__("Montant total du don de 3% :") + " "}
-                                <span>{this.state.totalDons}</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-md-10">
-                    <div className="row">
-                        <div className="col-md-12 col-md-offset-1">
-                            <BootstrapTable data={this.state.dons} striped={true} hover={true}>
-                                <TableHeaderColumn isKey={true} dataField="id" dataSort>{__("Numéro d'adhérent")}</TableHeaderColumn>
-                                <TableHeaderColumn dataField="name" dataSort>{__("Association")}</TableHeaderColumn>
-                                <TableHeaderColumn dataField="nb_parrainages" dataSort>{__("Nombre de parrainages")}</TableHeaderColumn>
-                                <TableHeaderColumn dataField="don" dataSort>{__("Montant du don")}</TableHeaderColumn>
-                            </BootstrapTable>
-                        </div>
-                    </div>
-                </div>
                 <ToastContainer ref="container"
                                 toastMessageFactory={ToastMessageFactory}
                                 className="toast-top-right toast-top-right-navbar" />
@@ -177,11 +130,11 @@ class Dons3PourcentPage extends React.Component {
 
 
 ReactDOM.render(
-    <Dons3PourcentPage />,
-    document.getElementById('dons-3-pourcent')
+    <ExportVersOdooPage />,
+    document.getElementById('export-vers-odoo')
 )
 
 ReactDOM.render(
-    <NavbarTitle title={__("Dons 3%")} />,
+    <NavbarTitle title={__("Export vers Odoo")} />,
     document.getElementById('navbar-title')
 )
