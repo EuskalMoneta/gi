@@ -28,6 +28,7 @@ class ChangeVirementPage extends React.Component {
             memberId: '',
             bankTransferReference: '',
             amount: '',
+            description: 'Change par virement',
         }
     }
 
@@ -45,7 +46,8 @@ class ChangeVirementPage extends React.Component {
 
     validateForm = () => {
         if (this.state.memberId && this.state.bankTransferReference
-            && this.state.amount && isPositiveNumeric(null, this.state.amount)) {
+            && this.state.amount && isPositiveNumeric(null, this.state.amount)
+            && this.state.description) {
             this.enableButton()
         } else {
             this.disableButton()
@@ -59,6 +61,7 @@ class ChangeVirementPage extends React.Component {
         postData.member_login = this.state.memberId
         postData.bank_transfer_reference = this.state.bankTransferReference
         postData.amount = this.state.amount
+        postData.description = this.state.description
 
         var promise = (response) => {
             this.refs.container.success(
@@ -137,6 +140,17 @@ class ChangeVirementPage extends React.Component {
                         validationErrors={{
                             isPositiveNumeric: __("Montant invalide.")
                         }}
+                        elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
+                        onBlur={this.handleBlur}
+                        onChange={this.handleChange}
+                        required
+                    />
+                    <Input
+                        name="description"
+                        data-eusko="change-virement-description"
+                        value={this.state.description}
+                        label={__("Description")}
+                        type="text"
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
                         onBlur={this.handleBlur}
                         onChange={this.handleChange}
