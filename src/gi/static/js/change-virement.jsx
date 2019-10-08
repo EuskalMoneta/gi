@@ -55,7 +55,8 @@ class ChangeVirementPage extends React.Component {
                 }
                 this.setState({
                     memberId: member['login'],
-                    memberName: name
+                    memberName: name,
+                    bankTransferReference: moment().format() + '-' + member['login']
                 }, this.validateForm)
             }
             fetchAuth(url, 'GET', promise)
@@ -158,7 +159,7 @@ class ChangeVirementPage extends React.Component {
                         name="bankTransferReference"
                         data-eusko="change-virement-bank-transfer-reference"
                         value={this.state.bankTransferReference}
-                        label={__("Référence du virement")}
+                        label={__("Référence interne")}
                         type="text"
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
                         onBlur={this.handleBlur}
@@ -184,7 +185,7 @@ class ChangeVirementPage extends React.Component {
                         name="description"
                         data-eusko="change-virement-description"
                         value={this.state.description}
-                        label={__("Description")}
+                        label={__("Libellé")}
                         type="text"
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
                         onBlur={this.handleBlur}
