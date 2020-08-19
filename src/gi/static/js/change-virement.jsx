@@ -48,7 +48,7 @@ class ChangeVirementPage extends React.Component {
             var promise = (response) => {
                 var member = response[0]
                 var name = ''
-                if (member['login'][0] == 'E') {
+                if (member['login'][0] == 'E' || member['login'][0] == 'T') {
                     name = member['firstname'] + ' ' + member['lastname']
                 } else {
                     name = member['company']
