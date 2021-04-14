@@ -25,7 +25,7 @@ class ResilierAdherentPage extends React.Component {
             canSubmit: false,
             memberId: '',
             memberName: '',
-            cessationOfActivity: undefined,
+            cessationOfActivity: '0',
             terminationReason: '',
         }
     }
@@ -153,7 +153,7 @@ class ResilierAdherentPage extends React.Component {
                         name="cessationOfActivity"
                         data-eusko="resilier-adherent-cessation-of-activity"
                         value={this.state.cessationOfActivity}
-                        onChange={this.onFormChange}
+                        onChange={this.handleChange}
                         type="inline"
                         label={__("Cessation d'activité")}
                         options={[{value: '1', label: __('Oui')},
@@ -172,7 +172,7 @@ class ResilierAdherentPage extends React.Component {
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
                         onBlur={this.handleBlur}
                         onChange={this.handleChange}
-                        required
+
                     />
                     <Row layout="horizontal">
                         <input
