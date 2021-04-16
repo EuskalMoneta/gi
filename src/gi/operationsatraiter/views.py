@@ -18,6 +18,11 @@ def change_virement(request):
 
 
 @login_required
+def change_virement_multiple(request):
+    return render(request, 'operations/change-virement-multiple.html')
+
+
+@login_required
 def resilier_adherent(request):
     return render(request, 'operations/resilier-adherent.html')
 
