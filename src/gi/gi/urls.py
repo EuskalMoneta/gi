@@ -80,6 +80,7 @@ urlpatterns = [
     url(r'^operations/depots-retraits/?$', base_views.generic_history_validation, name='operations-depots-retraits'),
     url(r'^operations/changes-prelevement/?$', operations_views.changes_prelevement, name='operations-changes-prelevement'),
     url(r'^operations/change-virement/?$', operations_views.change_virement, name='operations-change-virement'),
+    url(r'^operations/change-virement-multiple/?$', operations_views.change_virement_multiple, name='operations-change-virement-multiple'),
     url(r'^operations/resilier-adherent/?$', operations_views.resilier_adherent, name='operations-resilier-adherent'),
     url(r'^operations/dons-3-pourcent/?$', operations_views.dons_3_pourcent, name='operations-dons-3-pourcent'),
     url(r'^operations/export-vers-odoo/$', operations_views.export_vers_odoo, name='operations-export-vers-odoo'),
