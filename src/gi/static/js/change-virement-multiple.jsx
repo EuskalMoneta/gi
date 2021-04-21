@@ -28,8 +28,7 @@ class ChangeVirementPage extends React.Component {
         this.state = {
             canSubmit: false,
             selectedFile: null,
-            resCSV: [],
-            resFinalCSV: [],
+            resCSV: []
         }
     }
 
@@ -48,8 +47,9 @@ class ChangeVirementPage extends React.Component {
     submitForm = (data) => {
         this.disableButton()
 
-        var promise = (response) => {
+        var that = this;
 
+        var promise = (response) => {
 
             var data = []
             response.forEach((item, index) =>{
@@ -58,10 +58,10 @@ class ChangeVirementPage extends React.Component {
                    ope.push(item["amount"])
                    ope.push(item["description"])
                    ope.push(item["message"])
-
+                 
                    data.push(ope)
             })
-            this.state.resCSV = data
+            that.setState({resCSV: data}, this.validateForm)
         }
 
         var promiseError = (err) => {
@@ -89,7 +89,6 @@ class ChangeVirementPage extends React.Component {
                    ope.member_login = item[0]
                    ope.amount = item[1]
                    ope.description = item[2]
-                   console.log("    item:", item[0]);
 
                    postData.push(ope)
                }
@@ -122,8 +121,6 @@ class ChangeVirementPage extends React.Component {
         this.setState({
                 resCSV: results.data.slice(1)
         })
-
-
 
     }
 
@@ -175,20 +172,6 @@ class ChangeVirementPage extends React.Component {
             </BootstrapTable>
         )
 
-        var historyTableFinal = (
-            <BootstrapTable
-             data={this.state.resFinalCSV} striped={true} hover={true} pagination={true}
-             selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
-             options={{noDataText: __("Rien à afficher."), hideSizePerPage: true, sizePerPage: 20}}
-             >
-                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="0">{__("Numéro d'adhérent")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="1" >{__("Montant")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="2">{__("Libellé de l'opération")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="3">{__("état")}</TableHeaderColumn>
-            </BootstrapTable>
-        )
-
         return (
             <div className="row">
                 <Formsy.Form
@@ -214,15 +197,11 @@ class ChangeVirementPage extends React.Component {
                             disabled={!this.state.canSubmit}
                         />
                     </Row>
+
                 </Formsy.Form>
                  <div className="row margin-right">
                         <div className="col-md-12 col-md-offset-1">
                             {historyTable}
-                        </div>
-                    </div>
-                <div className="row margin-right">
-                        <div className="col-md-12 col-md-offset-1">
-                            {historyTableFinal}
                         </div>
                     </div>
                 <ToastContainer ref="container"
