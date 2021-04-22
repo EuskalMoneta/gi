@@ -28,7 +28,9 @@ class ChangeVirementPage extends React.Component {
         this.state = {
             canSubmit: false,
             selectedFile: null,
-            resCSV: []
+            resCSV: [],
+            nombreOperation: 0,
+            nombreEchec: 0
         }
     }
 
@@ -52,15 +54,24 @@ class ChangeVirementPage extends React.Component {
         var promise = (response) => {
 
             var data = []
+            var nbOp = 0
+            var nbEchec = 0
             response.forEach((item, index) =>{
-                var ope = []
-                   ope.push(item["member_login"])
-                   ope.push(item["amount"])
-                   ope.push(item["description"])
-                   ope.push(item["message"])
-                 
-                   data.push(ope)
+                if(item["status"] === 0) {
+                    var ope = []
+                    ope.push(item["member_login"])
+                    ope.push(item["amount"])
+                    ope.push(item["description"])
+                    ope.push(item["message"])
+                    ope.push()
+
+                    data.push(ope)
+                    nbEchec++
+                }
+                nbOp++
             })
+            that.setState({nombreOperation: nbOp}, this.validateForm)
+            that.setState({nombreEchec: nbEchec}, this.validateForm)
             that.setState({resCSV: data}, this.validateForm)
         }
 
@@ -82,16 +93,17 @@ class ChangeVirementPage extends React.Component {
 
         var postData = []
 
+
         this.state.resCSV.forEach((item, index) => {
 
-               if(item[0] != ""){
-                   var ope = {}
-                   ope.member_login = item[0]
-                   ope.amount = item[1]
-                   ope.description = item[2]
+            if(item[0] != ""){
+                var ope = {}
+                ope.member_login = item[0]
+                ope.amount = item[1]
+                ope.description = item[2]
+                postData.push(ope)
+            }
 
-                   postData.push(ope)
-               }
         })
         var url = getAPIBaseURL + "change-par-virement/"
         fetchAuth(url, 'POST', promise, postData, promiseError)
@@ -119,7 +131,7 @@ class ChangeVirementPage extends React.Component {
         }
 
         this.setState({
-                resCSV: results.data.slice(1)
+            resCSV: results.data.slice(1)
         })
 
     }
@@ -160,15 +172,16 @@ class ChangeVirementPage extends React.Component {
 
         var historyTable = (
             <BootstrapTable
-             data={this.state.resCSV} striped={true} hover={true} pagination={true}
-             selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
-             options={{noDataText: __("Rien à afficher."), hideSizePerPage: true, sizePerPage: 20}}
-             >
+                data={this.state.resCSV} striped={true} hover={true} pagination={true}
+                selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
+                options={{noDataText: __("Rien à afficher."), hideSizePerPage: true, sizePerPage: 20}}
+            >
                 <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
                 <TableHeaderColumn dataField="0">{__("Numéro d'adhérent")}</TableHeaderColumn>
                 <TableHeaderColumn dataField="1" >{__("Montant")}</TableHeaderColumn>
                 <TableHeaderColumn dataField="2">{__("Libellé de l'opération")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="3">{__("état")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="3">{__("message")}</TableHeaderColumn>
+                <TableHeaderColumn dataField="4">{__("état")}</TableHeaderColumn>
             </BootstrapTable>
         )
 
@@ -186,24 +199,43 @@ class ChangeVirementPage extends React.Component {
                             required/>
 
                     </Row>
-                    <Row layout="horizontal">
-                        <input
-                            name="submit"
-                            data-eusko="change-virement-submit"
-                            type="submit"
-                            defaultValue={__("Valider")}
-                            className="btn btn-success"
-                            formNoValidate={true}
-                            disabled={!this.state.canSubmit}
-                        />
-                    </Row>
 
-                </Formsy.Form>
-                 <div className="row margin-right">
+                    <div className="row margin-right">
                         <div className="col-md-12 col-md-offset-1">
                             {historyTable}
                         </div>
                     </div>
+
+                    <div className="row">
+                        <div className="col-md-6 margin-top">
+                            <label className="col-md-12">{__("Nb d'opérations réussies") + " : "} {this.state.nombreOperation}</label>
+
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-6 margin-top">
+                            <label className="col-md-12">{__("Nb d'opérations echec") + " : "} {this.state.nombreEchec}</label>
+
+                        </div>
+                    </div>
+
+
+                    <Row layout="horizontal">
+                        <div className="col-md-6 margin-top">
+                            <input
+                                name="submit"
+                                data-eusko="change-virement-submit"
+                                type="submit"
+                                defaultValue={__("Valider")}
+                                className="btn btn-success"
+                                formNoValidate={true}
+                                disabled={!this.state.canSubmit}
+                            />
+                        </div>
+                    </Row>
+
+                </Formsy.Form>
+
                 <ToastContainer ref="container"
                                 toastMessageFactory={ToastMessageFactory}
                                 className="toast-top-right toast-top-right-navbar" />
