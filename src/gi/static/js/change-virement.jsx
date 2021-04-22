@@ -27,7 +27,6 @@ class ChangeVirementPage extends React.Component {
             canSubmit: false,
             memberId: '',
             memberName: '',
-            bankTransferReference: '',
             amount: '',
             description: 'Change par virement',
         }
@@ -56,7 +55,6 @@ class ChangeVirementPage extends React.Component {
                 this.setState({
                     memberId: member['login'],
                     memberName: name,
-                    bankTransferReference: moment().format() + '-' + member['login']
                 }, this.validateForm)
             }
             fetchAuth(url, 'GET', promise)
@@ -71,7 +69,6 @@ class ChangeVirementPage extends React.Component {
 
     validateForm = () => {
         if (this.state.memberId && this.state.memberName
-            && this.state.bankTransferReference
             && this.state.amount && isPositiveNumeric(null, this.state.amount)
             && this.state.description) {
             this.enableButton()
@@ -85,7 +82,6 @@ class ChangeVirementPage extends React.Component {
 
         var postData = {}
         postData.member_login = this.state.memberId
-        postData.bank_transfer_reference = this.state.bankTransferReference
         postData.amount = this.state.amount
         postData.description = this.state.description
 
@@ -120,7 +116,7 @@ class ChangeVirementPage extends React.Component {
         }
 
         var url = getAPIBaseURL + "change-par-virement/"
-        fetchAuth(url, 'POST', promise, postData, promiseError)
+        fetchAuth(url, 'POST', promise, [postData], promiseError)
     }
 
     render = () => {
@@ -154,17 +150,6 @@ class ChangeVirementPage extends React.Component {
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
                         required
                         readOnly
-                    />
-                    <Input
-                        name="bankTransferReference"
-                        data-eusko="change-virement-bank-transfer-reference"
-                        value={this.state.bankTransferReference}
-                        label={__("Référence interne")}
-                        type="text"
-                        elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
-                        onBlur={this.handleBlur}
-                        onChange={this.handleChange}
-                        required
                     />
                     <Input
                         name="amount"
