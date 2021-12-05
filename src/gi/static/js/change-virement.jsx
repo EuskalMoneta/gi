@@ -82,6 +82,7 @@ class ChangeVirementPage extends React.Component {
 
         var postData = {}
         postData.member_login = this.state.memberId
+        postData.member_name = this.state.memberName
         postData.amount = this.state.amount
         postData.description = this.state.description
 

@@ -19,7 +19,7 @@ const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animati
 Formsy.addValidationRule('isPositiveNumeric', isPositiveNumeric)
 
 
-class ChangeVirementPage extends React.Component {
+class ChangeVirementMultiplePage extends React.Component {
 
     constructor(props) {
         super(props)
@@ -49,30 +49,29 @@ class ChangeVirementPage extends React.Component {
     submitForm = (data) => {
         this.disableButton()
 
-        var that = this;
-
         var promise = (response) => {
-
             var data = []
             var nbOp = 0
             var nbEchec = 0
             response.forEach((item, index) =>{
-                if(item["status"] === 0) {
-                    var ope = []
-                    ope.push(item["member_login"])
-                    ope.push(item["amount"])
-                    ope.push(item["description"])
-                    ope.push(item["message"])
-                    ope.push()
-
-                    data.push(ope)
+                if(item["status"] === 1) {
+                    nbOp++
+                } else {
+                    data.push([
+                        item["member_name"],
+                        item["member_login"],
+                        item["amount"],
+                        item["description"],
+                        item["message"]
+                    ])
                     nbEchec++
                 }
-                nbOp++
             })
-            that.setState({nombreOperation: nbOp}, this.validateForm)
-            that.setState({nombreEchec: nbEchec}, this.validateForm)
-            that.setState({resCSV: data}, this.validateForm)
+            this.setState({
+                nombreOperation: nbOp,
+                nombreEchec: nbEchec,
+                resCSV: data
+            })
         }
 
         var promiseError = (err) => {
@@ -92,54 +91,31 @@ class ChangeVirementPage extends React.Component {
         }
 
         var postData = []
-
-
         this.state.resCSV.forEach((item, index) => {
 
             if(item[0] != ""){
                 var ope = {}
-                ope.member_login = item[0]
-                ope.amount = item[1]
-                ope.description = item[2]
+                ope.member_name = item[0]
+                ope.member_login = item[1]
+                ope.amount = Number(item[2].replace(',', '.'))
+                ope.description = item[3]
                 postData.push(ope)
             }
 
         })
         var url = getAPIBaseURL + "change-par-virement/"
         fetchAuth(url, 'POST', promise, postData, promiseError)
-
-        this.enableButton()
-
     }
 
     completeFn = (results) => {
-
-        var stepped = 0;
-        var rowCount = 0;
-        var errorCount = 0;
-        var firstError = undefined;
-
-        if (results && results.errors)
-        {
-            if (results.errors)
-            {
-                errorCount = results.errors.length;
-                firstError = results.errors[0];
-            }
-            if (results.data && results.data.length > 0)
-                rowCount = results.data.length;
-        }
-
         this.setState({
             resCSV: results.data.slice(1)
         })
-
     }
 
     errorFn = (err, file) => {
         console.log("ERROR:", err, file);
     }
-
 
     onChangeHandler=event=>{
         papaparse.parse(event.target.files[0], {
@@ -157,34 +133,6 @@ class ChangeVirementPage extends React.Component {
 
     render = () => {
 
-        // History data table
-        var dateFormatter = (cell, row) => {
-            // Force moment i18n
-            moment.locale(getCurrentLang)
-            return moment(cell).format('LLLL')
-        }
-
-        var amountFormatter = (cell, row) => {
-            // Cell is a string for now,
-            // we need to cast it in a Number object to use the toFixed method.
-            return Number(cell).toFixed(2)
-        }
-
-        var historyTable = (
-            <BootstrapTable
-                data={this.state.resCSV} striped={true} hover={true} pagination={true}
-                selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
-                options={{noDataText: __("Rien à afficher."), hideSizePerPage: true, sizePerPage: 20}}
-            >
-                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="0">{__("Numéro d'adhérent")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="1" >{__("Montant")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="2">{__("Libellé de l'opération")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="3">{__("message")}</TableHeaderColumn>
-                <TableHeaderColumn dataField="4">{__("état")}</TableHeaderColumn>
-            </BootstrapTable>
-        )
-
         return (
             <div className="row">
                 <Formsy.Form
@@ -197,28 +145,31 @@ class ChangeVirementPage extends React.Component {
                             type="file"
                             onChange={this.onChangeHandler}
                             required/>
-
                     </Row>
+
+                    <div className="row">
+                        <div className="col-md-6 margin-top">
+                            <label className="col-md-12">{__("Nb d'opérations réussies") + " : "} {this.state.nombreOperation}</label><br/>
+                            <label className="col-md-12">{__("Nb d'opérations en erreur") + " : "} {this.state.nombreEchec}</label>
+                        </div>
+                    </div>
 
                     <div className="row margin-right">
                         <div className="col-md-12 col-md-offset-1">
-                            {historyTable}
+                            <BootstrapTable
+                                data={this.state.resCSV} striped={true} hover={true} pagination={true}
+                                selectRow={{mode: 'none'}} tableContainerClass="react-bs-table-account-history"
+                                options={{noDataText: __("Rien à afficher."), hideSizePerPage: true, sizePerPage: 20}}
+                            >
+                                <TableHeaderColumn isKey={true} hidden={true} dataField="id">{__("ID")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="0">{__("Nom")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="1">{__("Numéro d'adhérent")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="2" >{__("Montant")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="3">{__("Libellé de l'opération")}</TableHeaderColumn>
+                                <TableHeaderColumn dataField="4">{__("Message")}</TableHeaderColumn>
+                            </BootstrapTable>
                         </div>
                     </div>
-
-                    <div className="row">
-                        <div className="col-md-6 margin-top">
-                            <label className="col-md-12">{__("Nb d'opérations réussies") + " : "} {this.state.nombreOperation}</label>
-
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6 margin-top">
-                            <label className="col-md-12">{__("Nb d'opérations echec") + " : "} {this.state.nombreEchec}</label>
-
-                        </div>
-                    </div>
-
 
                     <Row layout="horizontal">
                         <div className="col-md-6 margin-top">
@@ -233,7 +184,6 @@ class ChangeVirementPage extends React.Component {
                             />
                         </div>
                     </Row>
-
                 </Formsy.Form>
 
                 <ToastContainer ref="container"
@@ -246,11 +196,11 @@ class ChangeVirementPage extends React.Component {
 
 
 ReactDOM.render(
-    <ChangeVirementPage />,
-    document.getElementById('change-virement')
+    <ChangeVirementMultiplePage />,
+    document.getElementById('change-virement-multiple')
 )
 
 ReactDOM.render(
-    <NavbarTitle title={__("Change par virement")} />,
+    <NavbarTitle title={__("Change par virement multiple")} />,
     document.getElementById('navbar-title')
 )
