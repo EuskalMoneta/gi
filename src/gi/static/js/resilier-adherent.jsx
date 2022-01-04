@@ -25,11 +25,10 @@ class ResilierAdherentPage extends React.Component {
             canSubmit: false,
             memberId: '',
             memberName: '',
-            cessationOfActivity: '0',
             terminationReason: '',
+            cessationOfActivity: '0',
         }
     }
-
 
     enableButton = () => {
         this.setState({canSubmit: true})
@@ -80,8 +79,10 @@ class ResilierAdherentPage extends React.Component {
 
         var postData = {}
         postData.member_login = this.state.memberId
-        postData.cessation_of_activity = this.state.cessationOfActivity
         postData.termination_reason = this.state.terminationReason
+        if (this.state.memberId[0]=='Z') {
+            postData.cessation_of_activity = (this.state.cessationOfActivity == '1')
+        }
 
         var promise = (response) => {
             this.refs.container.success(
@@ -149,6 +150,18 @@ class ResilierAdherentPage extends React.Component {
                         required
                         readOnly
                     />
+                    <Input
+                        name="terminationReason"
+                        data-eusko="resilier-adherent-termination-reason"
+                        value={this.state.terminationReason}
+                        label={__("Raison de la résiliation")}
+                        type="text"
+                        elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
+                        onBlur={this.handleBlur}
+                        onChange={this.handleChange}
+                        required
+                    />
+                    {this.state.memberId[0]=='Z' &&
                     <RadioGroup
                         name="cessationOfActivity"
                         data-eusko="resilier-adherent-cessation-of-activity"
@@ -160,20 +173,8 @@ class ResilierAdherentPage extends React.Component {
                                   {value: '0', label: __('Non')}
                         ]}
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-6']}
-                        required={this.state.memberId[0]=='Z'}
-                        disabled={this.state.memberId[0]!='Z'}
-                    />
-                    <Input
-                        name="terminationReason"
-                        data-eusko="resilier-adherent-termination-reason"
-                        value={this.state.terminationReason}
-                        label={__("Raison de la résiliation")}
-                        type="text"
-                        elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
-                        onBlur={this.handleBlur}
-                        onChange={this.handleChange}
-
-                    />
+                        required
+                    />}
                     <Row layout="horizontal">
                         <input
                             name="submit"
