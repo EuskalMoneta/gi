@@ -2,11 +2,11 @@ import {
     fetchAuth,
     getAPIBaseURL,
     NavbarTitle,
-    isPositiveNumeric,
 } from 'Utils'
 
 const {
     Input,
+    RadioGroup,
     Row
 } = FRC
 
@@ -15,9 +15,7 @@ const {
 } = ReactToastr
 const ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage.animation)
 
-Formsy.addValidationRule('isPositiveNumeric', isPositiveNumeric)
-
-class ChangeVirementPage extends React.Component {
+class ResilierAdherentPage extends React.Component {
 
     constructor(props) {
         super(props)
@@ -27,8 +25,8 @@ class ChangeVirementPage extends React.Component {
             canSubmit: false,
             memberId: '',
             memberName: '',
-            amount: '',
-            description: 'Change par virement',
+            terminationReason: '',
+            cessationOfActivity: '0',
         }
     }
 
@@ -55,6 +53,7 @@ class ChangeVirementPage extends React.Component {
                 this.setState({
                     memberId: member['login'],
                     memberName: name,
+                    bankTransferReference: moment().format() + '-' + member['login']
                 }, this.validateForm)
             }
             fetchAuth(url, 'GET', promise)
@@ -68,9 +67,7 @@ class ChangeVirementPage extends React.Component {
     }
 
     validateForm = () => {
-        if (this.state.memberId && this.state.memberName
-            && this.state.amount && isPositiveNumeric(null, this.state.amount)
-            && this.state.description) {
+        if (this.state.memberId && this.state.memberName) {
             this.enableButton()
         } else {
             this.disableButton()
@@ -82,13 +79,14 @@ class ChangeVirementPage extends React.Component {
 
         var postData = {}
         postData.member_login = this.state.memberId
-        postData.member_name = this.state.memberName
-        postData.amount = this.state.amount
-        postData.description = this.state.description
+        postData.termination_reason = this.state.terminationReason
+        if (this.state.memberId[0]=='Z') {
+            postData.cessation_of_activity = (this.state.cessationOfActivity == '1')
+        }
 
         var promise = (response) => {
             this.refs.container.success(
-                __("L'enregistrement s'est déroulé correctement."),
+                __("La résiliation s'est déroulée correctement."),
                 "",
                 {
                     timeOut: 5000,
@@ -116,8 +114,8 @@ class ChangeVirementPage extends React.Component {
             )
         }
 
-        var url = getAPIBaseURL + "change-par-virement/"
-        fetchAuth(url, 'POST', promise, [postData], promiseError)
+        var url = getAPIBaseURL + "resilier-adherent/"
+        fetchAuth(url, 'POST', promise, postData, promiseError)
     }
 
     render = () => {
@@ -128,7 +126,7 @@ class ChangeVirementPage extends React.Component {
                     onValidSubmit={this.submitForm}>
                     <Input
                         name="memberId"
-                        data-eusko="change-virement-member-id"
+                        data-eusko="resilier-adherent-member-id"
                         value={this.state.memberId}
                         label={__("Numéro d'adhérent-e")}
                         type="text"
@@ -144,7 +142,7 @@ class ChangeVirementPage extends React.Component {
                     />
                     <Input
                         name="memberName"
-                        data-eusko="change-virement-member-name"
+                        data-eusko="resilier-adherent-member-name"
                         value={this.state.memberName}
                         label={__("Nom")}
                         type="text"
@@ -153,35 +151,34 @@ class ChangeVirementPage extends React.Component {
                         readOnly
                     />
                     <Input
-                        name="amount"
-                        data-eusko="change-virement-amount"
-                        value={this.state.amount}
-                        label={__("Montant")}
-                        type="number"
-                        validations="isPositiveNumeric"
-                        validationErrors={{
-                            isPositiveNumeric: __("Montant invalide.")
-                        }}
-                        elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
-                        onBlur={this.handleBlur}
-                        onChange={this.handleChange}
-                        required
-                    />
-                    <Input
-                        name="description"
-                        data-eusko="change-virement-description"
-                        value={this.state.description}
-                        label={__("Libellé")}
+                        name="terminationReason"
+                        data-eusko="resilier-adherent-termination-reason"
+                        value={this.state.terminationReason}
+                        label={__("Raison de la résiliation")}
                         type="text"
                         elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-5']}
                         onBlur={this.handleBlur}
                         onChange={this.handleChange}
                         required
                     />
+                    {this.state.memberId[0]=='Z' &&
+                    <RadioGroup
+                        name="cessationOfActivity"
+                        data-eusko="resilier-adherent-cessation-of-activity"
+                        value={this.state.cessationOfActivity}
+                        onChange={this.handleChange}
+                        type="inline"
+                        label={__("Cessation d'activité")}
+                        options={[{value: '1', label: __('Oui')},
+                                  {value: '0', label: __('Non')}
+                        ]}
+                        elementWrapperClassName={[{'col-sm-9': false}, 'col-sm-6']}
+                        required
+                    />}
                     <Row layout="horizontal">
                         <input
                             name="submit"
-                            data-eusko="change-virement-submit"
+                            data-eusko="resilier-adherent-submit"
                             type="submit"
                             defaultValue={__("Valider")}
                             className="btn btn-success"
@@ -200,11 +197,11 @@ class ChangeVirementPage extends React.Component {
 
 
 ReactDOM.render(
-    <ChangeVirementPage />,
-    document.getElementById('change-virement')
+    <ResilierAdherentPage />,
+    document.getElementById('resilier-adherent')
 )
 
 ReactDOM.render(
-    <NavbarTitle title={__("Change par virement")} />,
+    <NavbarTitle title={__("Résilier un.e adhérent.e")} />,
     document.getElementById('navbar-title')
 )

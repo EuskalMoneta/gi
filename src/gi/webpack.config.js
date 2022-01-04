@@ -37,6 +37,8 @@ module.exports = Object.keys(languages).map(function(language) {
             CashDeposit: './static/js/cash-deposit',
             ChangesPrelevement: './static/js/changes-prelevement',
             ChangeVirement: './static/js/change-virement',
+            ChangeVirementMultiple: './static/js/change-virement-multiple',
+            ResilierAdherent: './static/js/resilier-adherent',
             Dons3Pourcent: './static/js/dons-3-pourcent',
             ExportVersOdoo: './static/js/export-vers-odoo',
         },
@@ -60,6 +62,7 @@ module.exports = Object.keys(languages).map(function(language) {
                 Formsy: 'formsy-react',
                 FRC: 'formsy-react-components',
                 moment: 'moment',
+                papaparse: 'papaparse',
                 "_": 'underscore'
             }),
             new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /fr|eu/),
