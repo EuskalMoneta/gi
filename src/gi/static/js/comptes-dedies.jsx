@@ -1,8 +1,3 @@
-import {
-    fetchAuth,
-    getAPIBaseURL,
-} from 'Utils'
-
 import classNames from 'classnames'
 
 var ComptesDedies = React.createClass({

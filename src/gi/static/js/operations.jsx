@@ -1,6 +1,4 @@
 import {
-    fetchAuth,
-    getAPIBaseURL,
     NavbarTitle,
 } from 'Utils'
 
