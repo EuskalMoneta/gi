@@ -4,8 +4,6 @@ import {
     fetchGetToken,
     getUrlParameter,
     getCSRFToken,
-    getAPIBaseURL,
-    NavbarTitle,
 } from 'Utils'
 
 import classNames from 'classnames'
