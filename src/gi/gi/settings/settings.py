@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'csp.middleware.CSPMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
@@ -95,6 +95,7 @@ ROOT_URLCONF = 'gi.urls'
 
 APPEND_SLASH = False
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login'
 LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
 
