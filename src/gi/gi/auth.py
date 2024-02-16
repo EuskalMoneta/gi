@@ -12,10 +12,10 @@ import requests
 log = logging.getLogger()
 
 
-class GIAuthBackend(object):
+class GIAuthBackend:
     """ Authenticate users against Dolibarr through the EuskalMoneta API """
 
-    def authenticate(self, username, password):
+    def authenticate(self, request, username, password):
         user = None
         try:
             r_login = requests.post('{}{}'.format(settings.API_INTERNAL_URL, 'login/'),
