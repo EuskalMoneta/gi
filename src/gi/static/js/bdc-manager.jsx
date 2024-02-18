@@ -243,7 +243,7 @@ var CaisseEuro = React.createClass({
                         i.customValues,
                             (j) => {
                                 if (j.field.internalName == 'mode_de_paiement') {
-                                    return j.enumeratedValues[0].value == 'Chèque'
+                                    return j.enumeratedValue.value == 'Chèque'
                                 }
                                 else {
                                     return false
@@ -267,7 +267,7 @@ var CaisseEuro = React.createClass({
                         i.customValues,
                             (j) => {
                                 if (j.field.internalName == 'mode_de_paiement') {
-                                    return j.enumeratedValues[0].value == 'Espèces'
+                                    return j.enumeratedValue.value == 'Espèces'
                                 }
                                 else {
                                     return false
