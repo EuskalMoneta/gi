@@ -85,17 +85,29 @@ class ResilierAdherentPage extends React.Component {
         }
 
         var promise = (response) => {
-            this.refs.container.success(
-                __("La résiliation s'est déroulée correctement."),
-                "",
-                {
-                    timeOut: 5000,
-                    extendedTimeOut: 10000,
-                    closeButton:true
-                }
-            )
+            if (response.error) {
+                this.refs.container.error(
+                    response.error,
+                    "",
+                    {
+                        timeOut: 5000,
+                        extendedTimeOut: 10000,
+                        closeButton:true
+                    }
+                )
+            } else {
+                this.refs.container.success(
+                    __("La résiliation s'est déroulée correctement."),
+                    "",
+                    {
+                        timeOut: 5000,
+                        extendedTimeOut: 10000,
+                        closeButton:true
+                    }
+                )
 
-            setTimeout(() => window.location.assign('/operations'), 3000)
+                setTimeout(() => window.location.assign('/operations'), 3000)
+            }
         }
 
         var promiseError = (err) => {
