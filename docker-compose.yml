@@ -1,23 +1,39 @@
-version: '2'
-
 services:
   gi:
     build: .
-    container_name: gi
     volumes:
       - ./src/gi:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - 8002:8000
+      - "8002:8000"
     environment:
-      - API_PUBLIC_URL=http://localhost:8000
-      - API_INTERNAL_URL=http://api:8000
-      - DJANGO_DEBUG=True
-      - TEST=False
+      API_PUBLIC_URL: http://localhost:8000
+      API_INTERNAL_URL: http://api:8000
+      DJANGO_DEBUG: "True"
+      TEST: "False"
+      DATABASE_URL: postgres://gi_user:gi_password@db:5432/gi_db
+    depends_on:
+      - db
     networks:
       - eusko_net
 
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: gi_db
+      POSTGRES_USER: gi_user
+      POSTGRES_PASSWORD: gi_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - eusko_net
+
+volumes:
+  postgres_data:
+
 networks:
   eusko_net:
-    external:
-      name: api_eusko_net
+    external: true
